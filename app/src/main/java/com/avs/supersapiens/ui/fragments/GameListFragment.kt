@@ -44,7 +44,7 @@ class GameListFragment : Fragment() {
             else -> emptyList()
         }
 
-        val adapter = GameAdapter(games) { game ->
+        val adapter = GameAdapter(games, category) { game ->
             // Implementar navegación a un detalle de juego si es necesario
         }
 
