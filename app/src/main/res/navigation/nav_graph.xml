@@ -7,24 +7,44 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.avs.supersapiens.ui.fragments.HomeFragment"
-        android:label="Home"
+        android:label="@string/home"
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_homeFragment_to_gameListFragment"
             app:destination="@id/gameListFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_homeFragment_to_userFragment"
+            app:destination="@id/userFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
     <fragment
         android:id="@+id/gameListFragment"
         android:name="com.avs.supersapiens.ui.fragments.GameListFragment"
-        android:label="Game List"
+        android:label="@string/game_list"
         tools:layout="@layout/fragment_game_list">
         <argument
             android:name="category"
             app:argType="string" />
+        <action
+            android:id="@+id/action_gameListFragment_to_userFragment"
+            app:destination="@id/userFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
+
+    <fragment
+        android:id="@+id/userFragment"
+        android:name="com.avs.supersapiens.ui.fragments.UserFragment"
+        android:label="@string/user"
+        tools:layout="@layout/fragment_user" />
 </navigation>

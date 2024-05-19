@@ -6,6 +6,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.avs.supersapiens.R
 import androidx.appcompat.widget.Toolbar
+import android.widget.ImageView
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,6 +19,11 @@ class MainActivity : AppCompatActivity() {
 
         val navController = findNavController(R.id.nav_host_fragment)
         setupActionBarWithNavController(navController)
+
+        val userIcon: ImageView = findViewById(R.id.userIcon)
+        userIcon.setOnClickListener {
+            navController.navigate(R.id.action_homeFragment_to_userFragment)
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
