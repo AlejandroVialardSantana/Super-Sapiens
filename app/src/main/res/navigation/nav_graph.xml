@@ -8,7 +8,7 @@
         android:id="@+id/homeFragment"
         android:name="com.avs.supersapiens.ui.fragments.HomeFragment"
         android:label="@string/home"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_gameListFragment"
             app:destination="@id/gameListFragment"
@@ -34,6 +34,13 @@
             android:name="category"
             app:argType="string" />
         <action
+            android:id="@+id/action_gameListFragment_to_mathGamePlayActivity"
+            app:destination="@id/mathGamePlayActivity"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
             android:id="@+id/action_gameListFragment_to_userFragment"
             app:destination="@id/userFragment"
             app:enterAnim="@anim/slide_in_right"
@@ -46,5 +53,18 @@
         android:id="@+id/userFragment"
         android:name="com.avs.supersapiens.ui.fragments.UserFragment"
         android:label="@string/user"
-        tools:layout="@layout/fragment_user" />
+        tools:layout="@layout/fragment_user"/>
+
+    <!-- Define la actividad de juego de matemáticas en el gráfico de navegación -->
+    <activity
+        android:id="@+id/mathGamePlayActivity"
+        android:name="com.avs.supersapiens.ui.activities.MathGamePlayActivity"
+        tools:layout="@layout/activity_math_game_play">
+        <argument
+            android:name="category"
+            app:argType="string" />
+        <argument
+            android:name="gameTitle"
+            app:argType="string" />
+    </activity>
 </navigation>

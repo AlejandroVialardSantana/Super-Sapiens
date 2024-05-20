@@ -22,7 +22,11 @@ class MainActivity : AppCompatActivity() {
 
         val userIcon: ImageView = findViewById(R.id.userIcon)
         userIcon.setOnClickListener {
-            navController.navigate(R.id.action_homeFragment_to_userFragment)
+            if (navController.currentDestination?.id == R.id.homeFragment) {
+                navController.navigate(R.id.action_homeFragment_to_userFragment)
+            } else if (navController.currentDestination?.id == R.id.gameListFragment) {
+                navController.navigate(R.id.action_gameListFragment_to_userFragment)
+            }
         }
     }
 

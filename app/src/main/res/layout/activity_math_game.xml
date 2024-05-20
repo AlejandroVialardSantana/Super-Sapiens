@@ -1,0 +1,33 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp"
+    tools:context=".ui.activities.MathGameActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bienvenido al juego de Sumas y Restas"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="24dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Instrucciones: Resuelve las operaciones matemáticas que se mostrarán usando diferentes métodos de interacción."
+        android:textSize="18sp"
+        android:layout_marginBottom="32dp" />
+
+    <Button
+        android:id="@+id/startGameButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Comenzar"
+        android:textSize="18sp"
+        android:padding="16dp"
+        android:elevation="4dp" />
+</LinearLayout>

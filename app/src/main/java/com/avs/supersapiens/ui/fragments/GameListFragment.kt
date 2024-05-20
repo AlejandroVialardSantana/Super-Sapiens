@@ -1,5 +1,6 @@
 package com.avs.supersapiens.ui.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import com.avs.supersapiens.R
 import com.avs.supersapiens.adapters.GameAdapter
 import com.avs.supersapiens.databinding.FragmentGameListBinding
 import com.avs.supersapiens.models.Game
+import com.avs.supersapiens.ui.activities.MathGameActivity
 
 class GameListFragment : Fragment() {
 
@@ -45,7 +47,10 @@ class GameListFragment : Fragment() {
         }
 
         val adapter = GameAdapter(games, category) { game ->
-            // Implementar navegación a un detalle de juego si es necesario
+            when (game.title) {
+                "Sumas y Restas" -> startActivity(Intent(activity, MathGameActivity::class.java))
+                // Agregar navegación para otros juegos aquí
+            }
         }
 
         binding.recyclerView.layoutManager = LinearLayoutManager(context)

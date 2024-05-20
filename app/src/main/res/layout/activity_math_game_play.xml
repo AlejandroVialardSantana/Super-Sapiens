@@ -1,0 +1,116 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:context=".ui.activities.MathGamePlayActivity">
+
+        <TextView
+            android:id="@+id/questionText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:text="¿Cuál es el resultado?"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <!-- Layout para entrada de texto -->
+        <LinearLayout
+            android:id="@+id/answerInputLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <EditText
+                android:id="@+id/answerInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:hint="Escribe tu respuesta"
+                android:inputType="number"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/submitButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="4dp"
+                android:padding="16dp"
+                android:text="Enviar"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <!-- Layout para drag and drop -->
+        <LinearLayout
+            android:id="@+id/dragDropLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/option1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:background="@android:color/darker_gray"
+                    android:padding="16dp"
+                    android:text="0"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/option2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:background="@android:color/darker_gray"
+                    android:padding="16dp"
+                    android:text="0"
+                    android:textSize="24sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/answerDropTarget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:background="@android:color/holo_blue_light"
+                android:padding="16dp"
+                android:text="Arrastra la respuesta aquí"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+        <!-- Botón para reconocimiento de voz -->
+        <Button
+            android:id="@+id/voiceButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:elevation="4dp"
+            android:padding="16dp"
+            android:text="Responder con Voz"
+            android:textSize="18sp"
+            android:visibility="gone" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
