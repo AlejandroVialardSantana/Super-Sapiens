@@ -1,5 +1,6 @@
 package com.avs.supersapiens.ui.activities
 
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipDescription
 import android.content.Intent
@@ -18,9 +19,11 @@ import kotlin.random.Random
 class MathGamePlayActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMathGamePlayBinding
-
-    private var correctAnswer = 0
+    private var correctAnswers = 0
+    private var currentQuestion = 1
+    private var correctAnswer: Int = 0
     private val REQUEST_CODE_SPEECH_INPUT = 100
+    private val totalQuestions = 10
     private var currentMode = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +41,9 @@ class MathGamePlayActivity : AppCompatActivity() {
         binding.voiceButton.setOnClickListener {
             promptSpeechInput()
         }
+
+        binding.answerInputLayout.visibility = View.VISIBLE
+        binding.voiceButton.visibility = View.VISIBLE
     }
 
     private fun setupDragDrop() {
@@ -89,11 +95,16 @@ class MathGamePlayActivity : AppCompatActivity() {
     }
 
     private fun generateNewQuestion() {
+        if (currentQuestion > totalQuestions) {
+            finishGame()
+            return
+        }
+
         val num1 = Random.nextInt(1, 20)
-        val num2 = Random.nextInt(1, num1) // Asegurar que num2 <= num1 para evitar negativos
+        val num2 = Random.nextInt(1, 20)
         val isAddition = Random.nextBoolean()
 
-        correctAnswer = if (isAddition) {
+        correctAnswer = if (isAddition || num2 <= num1) {
             binding.questionText.text = "$num1 + $num2 = ?"
             num1 + num2
         } else {
@@ -110,7 +121,8 @@ class MathGamePlayActivity : AppCompatActivity() {
             binding.option2.text = correctAnswer.toString()
         }
 
-        // Alternar entre modos de interacción
+        binding.questionNumberText.text = "Pregunta $currentQuestion de $totalQuestions"
+
         currentMode = (currentMode + 1) % 3
         updateUIForCurrentMode()
     }
@@ -125,7 +137,7 @@ class MathGamePlayActivity : AppCompatActivity() {
             1 -> {
                 binding.answerInputLayout.visibility = View.VISIBLE
                 binding.dragDropLayout.visibility = View.GONE
-                binding.voiceButton.visibility = View.GONE
+                binding.voiceButton.visibility = View.VISIBLE
             }
             2 -> {
                 binding.answerInputLayout.visibility = View.GONE
@@ -144,14 +156,38 @@ class MathGamePlayActivity : AppCompatActivity() {
         }
 
         if (answer == correctAnswer) {
-            Toast.makeText(this, "¡Correcto!", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this, "Incorrecto. La respuesta correcta es $correctAnswer", Toast.LENGTH_SHORT).show()
+            correctAnswers++
         }
 
-        generateNewQuestion()
-        binding.answerInput.text.clear()
+        currentQuestion++
+
+        if (currentQuestion <= totalQuestions) {
+            generateNewQuestion()
+            binding.answerInput.text.clear()
+        } else {
+            finishGame()
+        }
     }
+
+    private fun finishGame() {
+        saveGameProgress()
+        val intent = Intent(this, GameResultActivity::class.java)
+        intent.putExtra("correctAnswers", correctAnswers)
+        intent.putExtra("totalQuestions", totalQuestions)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun saveGameProgress() {
+        val sharedPreferences = getSharedPreferences("game_progress", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putInt("math_Sumas y Restas_progress", correctAnswers)
+        if (correctAnswers == totalQuestions) {
+            editor.putBoolean("math_Sumas y Restas_unlocked", true)
+        }
+        editor.apply()
+    }
+
 
     private fun promptSpeechInput() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)

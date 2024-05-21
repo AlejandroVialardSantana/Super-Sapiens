@@ -1,5 +1,6 @@
 package com.avs.supersapiens.ui.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -27,11 +28,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val categories = listOf(
-            GameCategory("Matemáticas", R.drawable.ic_math, "math"),
-            GameCategory("Inglés", R.drawable.ic_english, "english"),
-            GameCategory("Ciencias", R.drawable.ic_science, "science")
-        )
+        val categories = loadCategoriesProgress()
 
         val adapter = GameCategoryAdapter(categories) { category ->
             val action = HomeFragmentDirections.actionHomeFragmentToGameListFragment(category.category)
@@ -40,5 +37,18 @@ class HomeFragment : Fragment() {
 
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.adapter = adapter
+    }
+
+    private fun loadCategoriesProgress(): List<GameCategory> {
+        val sharedPreferences = requireActivity().getSharedPreferences("game_progress", Context.MODE_PRIVATE)
+        val mathCompleted = sharedPreferences.getInt("math_gamesCompleted", 0)
+        val englishCompleted = sharedPreferences.getInt("english_gamesCompleted", 0)
+        val scienceCompleted = sharedPreferences.getInt("science_gamesCompleted", 0)
+
+        return listOf(
+            GameCategory("Matemáticas", R.drawable.ic_math, "math", mathCompleted, 2),
+            GameCategory("Inglés", R.drawable.ic_english, "english", englishCompleted, 2),
+            GameCategory("Ciencias", R.drawable.ic_science, "science", scienceCompleted, 2)
+        )
     }
 }

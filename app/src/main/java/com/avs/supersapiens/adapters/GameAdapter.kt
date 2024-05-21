@@ -21,6 +21,7 @@ class GameAdapter(
         val gameIcon: ImageView = itemView.findViewById(R.id.gameIcon)
         val gameTitle: TextView = itemView.findViewById(R.id.gameTitle)
         val gameCardContent: LinearLayout = itemView.findViewById(R.id.cardContent)
+        val gameProgress: TextView = itemView.findViewById(R.id.gameProgress)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
@@ -43,7 +44,18 @@ class GameAdapter(
         }
         holder.gameCardContent.setBackgroundColor(backgroundColor)
 
-        holder.itemView.setOnClickListener { clickListener(game) }
+        holder.itemView.isEnabled = game.isUnlocked
+        holder.gameTitle.alpha = if (game.isUnlocked) 1.0f else 0.5f
+
+        // Show progress
+        val progressText = "${game.questionsAnswered}/${game.totalQuestions}"
+        holder.gameProgress.text = progressText
+
+        holder.itemView.setOnClickListener {
+            if (game.isUnlocked) {
+                clickListener(game)
+            }
+        }
     }
 
     override fun getItemCount() = games.size

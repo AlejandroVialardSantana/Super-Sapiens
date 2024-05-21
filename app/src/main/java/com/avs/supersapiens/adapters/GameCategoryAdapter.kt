@@ -19,11 +19,11 @@ class GameCategoryAdapter(
     class GameCategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val gameIcon: ImageView = itemView.findViewById(R.id.gameIcon)
         val gameTitle: TextView = itemView.findViewById(R.id.gameTitle)
-        val cardContent: LinearLayout = itemView.findViewById(R.id.cardContent)
+        val categoryProgress: TextView = itemView.findViewById(R.id.categoryProgress)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameCategoryViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_game_card, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_game_category_card, parent, false)
         return GameCategoryViewHolder(view)
     }
 
@@ -39,7 +39,10 @@ class GameCategoryAdapter(
             "science" -> ContextCompat.getColor(context, R.color.colorScience)
             else -> ContextCompat.getColor(context, R.color.white)
         }
-        holder.cardContent.setBackgroundColor(backgroundColor)
+        holder.itemView.setBackgroundColor(backgroundColor)
+
+        val progressText = "${category.gamesCompleted}/${category.totalGames}"
+        holder.categoryProgress.text = progressText
 
         holder.itemView.setOnClickListener { clickListener(category) }
     }

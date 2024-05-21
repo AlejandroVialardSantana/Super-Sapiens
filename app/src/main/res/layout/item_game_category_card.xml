@@ -6,7 +6,6 @@
     android:background="@drawable/card_background">
 
     <LinearLayout
-        android:id="@+id/cardContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -25,17 +24,17 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_gravity="center_horizontal"
-            android:text="Game Title"
+            android:text="Category Title"
             android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/gameProgress"
+            android:id="@+id/categoryProgress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_gravity="center_horizontal"
-            android:text="0/10"
+            android:text="0/0"
             android:textSize="12sp" />
     </LinearLayout>
 </FrameLayout>
