@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.speech.RecognizerIntent
+import android.util.Log
 import android.view.DragEvent
 import android.view.View
 import android.widget.TextView
@@ -108,8 +109,9 @@ class MathGamePlayActivity : AppCompatActivity() {
             binding.questionText.text = "$num1 + $num2 = ?"
             num1 + num2
         } else {
-            binding.questionText.text = "$num1 - $num2 = ?"
-            num1 - num2
+            val (a, b) = if (num1 >= num2) Pair(num1, num2) else Pair(num2, num1)
+            binding.questionText.text = "$a - $b = ?"
+            a - b
         }
 
         val incorrectAnswer = correctAnswer + Random.nextInt(1, 10)
@@ -171,10 +173,9 @@ class MathGamePlayActivity : AppCompatActivity() {
 
     private fun finishGame() {
         saveGameProgress()
-        val intent = Intent(this, GameResultActivity::class.java)
-        intent.putExtra("correctAnswers", correctAnswers)
-        intent.putExtra("totalQuestions", totalQuestions)
-        startActivity(intent)
+        val resultIntent = Intent()
+        resultIntent.putExtra("correctAnswers", correctAnswers)
+        setResult(Activity.RESULT_OK, resultIntent)
         finish()
     }
 
@@ -183,11 +184,12 @@ class MathGamePlayActivity : AppCompatActivity() {
         val editor = sharedPreferences.edit()
         editor.putInt("math_Sumas y Restas_progress", correctAnswers)
         if (correctAnswers == totalQuestions) {
-            editor.putBoolean("math_Sumas y Restas_unlocked", true)
+            editor.putBoolean("math_Sumas y Restas_completed", true)
+            editor.putBoolean("math_Multiplicaciones_unlocked", true)
         }
         editor.apply()
+        Log.d("MathGamePlayActivity", "saveGameProgress: progress = $correctAnswers, completed = ${correctAnswers == totalQuestions}")
     }
-
 
     private fun promptSpeechInput() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -217,6 +219,7 @@ class MathGamePlayActivity : AppCompatActivity() {
 
     private fun convertWordToNumber(word: String): String {
         return when (word.lowercase()) {
+            "cero" -> "0"
             "uno" -> "1"
             "dos" -> "2"
             "tres" -> "3"

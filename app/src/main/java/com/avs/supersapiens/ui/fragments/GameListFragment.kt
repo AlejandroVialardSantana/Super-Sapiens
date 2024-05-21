@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,27 +61,34 @@ class GameListFragment : Fragment() {
                 updateGameProgress(game, correctAnswers)
                 updateCategoryProgress("math")
                 saveGames("math", games)
+            } else {
+                Log.d("GameListFragment", "onActivityResult: Game not found")
             }
+        } else {
+            Log.d("GameListFragment", "onActivityResult: Invalid requestCode or resultCode")
         }
     }
 
     private fun updateGameProgress(game: Game, correctAnswers: Int) {
         game.questionsAnswered = correctAnswers
         if (correctAnswers == game.totalQuestions) {
+            game.isCompleted = true
             val nextIndex = games.indexOf(game) + 1
             if (nextIndex < games.size) {
                 games[nextIndex].isUnlocked = true
             }
         }
         adapter.notifyDataSetChanged()
+        Log.d("GameListFragment", "updateGameProgress: ${game.title} - progress: ${game.questionsAnswered}, completed: ${game.isCompleted}")
     }
 
     private fun updateCategoryProgress(category: String) {
         val sharedPreferences = requireActivity().getSharedPreferences("game_progress", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        val gamesCompleted = games.count { it.questionsAnswered == it.totalQuestions }
+        val gamesCompleted = games.count { it.isCompleted }
         editor.putInt("${category}_gamesCompleted", gamesCompleted)
         editor.apply()
+        Log.d("GameListFragment", "updateCategoryProgress: $category gamesCompleted = $gamesCompleted")
     }
 
     private fun loadGames(category: String): MutableList<Game> {
@@ -104,6 +112,8 @@ class GameListFragment : Fragment() {
         games.forEach { game ->
             game.questionsAnswered = sharedPreferences.getInt("${category}_${game.title}_progress", 0)
             game.isUnlocked = sharedPreferences.getBoolean("${category}_${game.title}_unlocked", game.isUnlocked)
+            game.isCompleted = sharedPreferences.getBoolean("${category}_${game.title}_completed", game.isCompleted)
+            Log.d("GameListFragment", "loadGames: ${game.title} - progress: ${game.questionsAnswered}, unlocked: ${game.isUnlocked}, completed: ${game.isCompleted}")
         }
 
         return games
@@ -116,6 +126,8 @@ class GameListFragment : Fragment() {
         games.forEach { game ->
             editor.putInt("${category}_${game.title}_progress", game.questionsAnswered)
             editor.putBoolean("${category}_${game.title}_unlocked", game.isUnlocked)
+            editor.putBoolean("${category}_${game.title}_completed", game.isCompleted)
+            Log.d("GameListFragment", "saveGames: ${game.title} - progress: ${game.questionsAnswered}, unlocked: ${game.isUnlocked}, completed: ${game.isCompleted}")
         }
 
         editor.apply()

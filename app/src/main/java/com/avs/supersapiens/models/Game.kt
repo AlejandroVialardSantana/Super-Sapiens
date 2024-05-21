@@ -5,5 +5,6 @@ data class Game(
     val iconResId: Int,
     var isUnlocked: Boolean = false,
     var questionsAnswered: Int = 0,
-    val totalQuestions: Int = 10
+    val totalQuestions: Int = 10,
+    var isCompleted: Boolean = false
 )

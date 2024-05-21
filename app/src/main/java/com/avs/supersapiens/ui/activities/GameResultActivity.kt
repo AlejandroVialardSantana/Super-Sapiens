@@ -28,9 +28,6 @@ class GameResultActivity : AppCompatActivity() {
         }
 
         binding.backButton.setOnClickListener {
-            val backIntent = Intent(this, MainActivity::class.java)
-            backIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(backIntent)
             finish()
         }
     }

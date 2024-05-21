@@ -2,6 +2,7 @@ package com.avs.supersapiens.ui.fragments
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,6 +45,8 @@ class HomeFragment : Fragment() {
         val mathCompleted = sharedPreferences.getInt("math_gamesCompleted", 0)
         val englishCompleted = sharedPreferences.getInt("english_gamesCompleted", 0)
         val scienceCompleted = sharedPreferences.getInt("science_gamesCompleted", 0)
+
+        Log.d("HomeFragment", "loadCategoriesProgress: mathCompleted = $mathCompleted, englishCompleted = $englishCompleted, scienceCompleted = $scienceCompleted")
 
         return listOf(
             GameCategory("Matemáticas", R.drawable.ic_math, "math", mathCompleted, 2),

@@ -3,6 +3,7 @@ package com.avs.supersapiens.ui.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.avs.supersapiens.databinding.ActivityMathGameBinding
 
@@ -25,10 +26,13 @@ class MathGameActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_PLAY_GAME && resultCode == Activity.RESULT_OK) {
             val correctAnswers = data?.getIntExtra("correctAnswers", 0) ?: 0
+            Log.d("MathGameActivity", "onActivityResult: correctAnswers = $correctAnswers")
             val resultIntent = Intent()
             resultIntent.putExtra("correctAnswers", correctAnswers)
             setResult(Activity.RESULT_OK, resultIntent)
             finish()
+        } else {
+            Log.d("MathGameActivity", "onActivityResult: Invalid requestCode or resultCode")
         }
     }
 
