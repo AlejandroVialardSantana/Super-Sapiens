@@ -20,8 +20,8 @@ class GameAdapter(
     class GameViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val gameIcon: ImageView = itemView.findViewById(R.id.gameIcon)
         val gameTitle: TextView = itemView.findViewById(R.id.gameTitle)
+        val gameScore: TextView = itemView.findViewById(R.id.gameScore)
         val gameCardContent: LinearLayout = itemView.findViewById(R.id.cardContent)
-        val gameProgress: TextView = itemView.findViewById(R.id.gameProgress)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
@@ -33,6 +33,7 @@ class GameAdapter(
         val game = games[position]
         holder.gameIcon.setImageResource(game.iconResId)
         holder.gameTitle.text = game.title
+        holder.gameScore.text = "${game.score}/10" // Mostrar el puntaje
 
         // Set background color based on category
         val context = holder.itemView.context
@@ -44,18 +45,7 @@ class GameAdapter(
         }
         holder.gameCardContent.setBackgroundColor(backgroundColor)
 
-        holder.itemView.isEnabled = game.isUnlocked
-        holder.gameTitle.alpha = if (game.isUnlocked) 1.0f else 0.5f
-
-        // Show progress
-        val progressText = "${game.questionsAnswered}/${game.totalQuestions}"
-        holder.gameProgress.text = progressText
-
-        holder.itemView.setOnClickListener {
-            if (game.isUnlocked) {
-                clickListener(game)
-            }
-        }
+        holder.itemView.setOnClickListener { clickListener(game) }
     }
 
     override fun getItemCount() = games.size

@@ -16,19 +16,18 @@ class GameResultActivity : AppCompatActivity() {
 
         val correctAnswers = intent.getIntExtra("correctAnswers", 0)
         val totalQuestions = intent.getIntExtra("totalQuestions", 10)
-        val incorrectAnswers = totalQuestions - correctAnswers
 
         binding.correctAnswersText.text = "Respuestas Correctas: $correctAnswers"
-        binding.incorrectAnswersText.text = "Respuestas Incorrectas: $incorrectAnswers"
+        binding.incorrectAnswersText.text = "Respuestas Incorrectas: ${totalQuestions - correctAnswers}"
 
         binding.retryButton.setOnClickListener {
-            val retryIntent = Intent(this, MathGamePlayActivity::class.java)
-            startActivity(retryIntent)
             finish()
         }
 
         binding.backButton.setOnClickListener {
-            finish()
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(intent)
         }
     }
 }

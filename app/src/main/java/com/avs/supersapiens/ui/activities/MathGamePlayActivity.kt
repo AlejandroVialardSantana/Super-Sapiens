@@ -1,205 +1,191 @@
 package com.avs.supersapiens.ui.activities
 
-import android.app.Activity
-import android.content.ClipData
-import android.content.ClipDescription
+import android.content.Context
 import android.content.Intent
-import android.graphics.Color
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.speech.RecognizerIntent
-import android.util.Log
-import android.view.DragEvent
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import com.avs.supersapiens.databinding.ActivityMathGamePlayBinding
-import kotlin.random.Random
+import com.avs.supersapiens.R
+import java.util.*
 
 class MathGamePlayActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMathGamePlayBinding
+    private lateinit var questionNumberText: TextView
+    private lateinit var questionText: TextView
+    private lateinit var answerInputLayout: View
+    private lateinit var answerInput: EditText
+    private lateinit var submitButton: Button
+    private lateinit var multipleChoiceLayout: View
+    private lateinit var option1: Button
+    private lateinit var option2: Button
+    private lateinit var option3: Button
+    private lateinit var option4: Button
+    private lateinit var voiceButton: Button
+
+    private var currentQuestionIndex = 0
     private var correctAnswers = 0
-    private var currentQuestion = 1
-    private var correctAnswer: Int = 0
+    private var questions: List<Question> = emptyList()
     private val REQUEST_CODE_SPEECH_INPUT = 100
-    private val totalQuestions = 10
-    private var currentMode = 0
+    private lateinit var gameId: String
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMathGamePlayBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_math_game_play)
 
-        setupDragDrop()
-        generateNewQuestion()
+        questionNumberText = findViewById(R.id.questionNumberText)
+        questionText = findViewById(R.id.questionText)
+        answerInputLayout = findViewById(R.id.answerInputLayout)
+        answerInput = findViewById(R.id.answerInput)
+        submitButton = findViewById(R.id.submitButton)
+        multipleChoiceLayout = findViewById(R.id.multipleChoiceLayout)
+        option1 = findViewById(R.id.option1)
+        option2 = findViewById(R.id.option2)
+        option3 = findViewById(R.id.option3)
+        option4 = findViewById(R.id.option4)
+        voiceButton = findViewById(R.id.voiceButton)
 
-        binding.submitButton.setOnClickListener {
-            checkAnswer()
-        }
+        gameId = intent.getStringExtra("gameId") ?: return
+        val gameTitle = intent.getStringExtra("gameTitle") ?: return
+        val gameType = intent.getStringExtra("gameType") ?: return
+        correctAnswers = intent.getIntExtra("gameScore", 0)
 
-        binding.voiceButton.setOnClickListener {
-            promptSpeechInput()
-        }
+        sharedPreferences = getSharedPreferences("game_scores", Context.MODE_PRIVATE)
 
-        binding.answerInputLayout.visibility = View.VISIBLE
-        binding.voiceButton.visibility = View.VISIBLE
+        questions = generateQuestions(gameType)
+
+        submitButton.setOnClickListener { checkAnswer() }
+        option1.setOnClickListener { checkMultipleChoiceAnswer(0) }
+        option2.setOnClickListener { checkMultipleChoiceAnswer(1) }
+        option3.setOnClickListener { checkMultipleChoiceAnswer(2) }
+        option4.setOnClickListener { checkMultipleChoiceAnswer(3) }
+        voiceButton.setOnClickListener { promptSpeechInput() }
+
+        showQuestion()
     }
 
-    private fun setupDragDrop() {
-        binding.answerDropTarget.setOnDragListener { v, event ->
-            when (event.action) {
-                DragEvent.ACTION_DRAG_STARTED -> {
-                    event.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)
+    private fun generateQuestions(gameType: String): List<Question> {
+        return when (gameType) {
+            "sum" -> generateSumAndSubtractQuestions()
+            "multiply" -> generateMultiplicationQuestions()
+            else -> emptyList()
+        }
+    }
+
+    private fun generateSumAndSubtractQuestions(): List<Question> {
+        val questions = mutableListOf<Question>()
+        var count = 0
+        while (count < 10){
+            val num1 = Random().nextInt(20) + 1
+            val num2 = Random().nextInt(20) + 1
+            if (Random().nextBoolean()) {
+                val correctAnswer = num1 + num2
+                questions.add(Question("$num1 + $num2 = ?", correctAnswer, QuestionType.TEXT))
+            } else {
+                val correctAnswer = num1 - num2
+                if (correctAnswer >= 0) {
+                    questions.add(Question("$num1 - $num2 = ?", correctAnswer, QuestionType.TEXT))
+                } else {
+                    count++
                 }
-                DragEvent.ACTION_DRAG_ENTERED -> {
-                    v.setBackgroundColor(Color.LTGRAY)
-                    v.invalidate()
-                    true
-                }
-                DragEvent.ACTION_DRAG_EXITED -> {
-                    v.setBackgroundColor(Color.TRANSPARENT)
-                    v.invalidate()
-                    true
-                }
-                DragEvent.ACTION_DROP -> {
-                    v.setBackgroundColor(Color.TRANSPARENT)
-                    v.invalidate()
-                    val item = event.clipData.getItemAt(0)
-                    val dragData = item.text.toString()
-                    val answer = dragData.toIntOrNull()
-                    if (answer != null) {
-                        checkAnswer(answer)
-                    }
-                    true
-                }
-                DragEvent.ACTION_DRAG_ENDED -> {
-                    v.setBackgroundColor(Color.TRANSPARENT)
-                    v.invalidate()
-                    true
-                }
-                else -> false
             }
         }
-
-        val dragListener = View.OnLongClickListener { v ->
-            val item = ClipData.Item((v as TextView).text)
-            val dragData = ClipData(v.text, arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN), item)
-            val dragShadow = View.DragShadowBuilder(v)
-            ViewCompat.startDragAndDrop(v, dragData, dragShadow, v, 0)
-            true
-        }
-
-        binding.option1.setOnLongClickListener(dragListener)
-        binding.option2.setOnLongClickListener(dragListener)
+        return questions
     }
 
-    private fun generateNewQuestion() {
-        if (currentQuestion > totalQuestions) {
-            finishGame()
-            return
+    private fun generateMultiplicationQuestions(): List<Question> {
+        val questions = mutableListOf<Question>()
+        for (i in 1..10) {
+            val num1 = Random().nextInt(12) + 1
+            val num2 = Random().nextInt(12) + 1
+            val correctAnswer = num1 * num2
+            questions.add(Question("$num1 * $num2 = ?", correctAnswer, QuestionType.MULTIPLE_CHOICE))
         }
+        return questions
+    }
 
-        val num1 = Random.nextInt(1, 20)
-        val num2 = Random.nextInt(1, 20)
-        val isAddition = Random.nextBoolean()
+    private fun showQuestion() {
+        if (currentQuestionIndex < questions.size) {
+            val question = questions[currentQuestionIndex]
+            questionNumberText.text = "Pregunta ${currentQuestionIndex + 1} de ${questions.size}"
+            questionText.text = question.text
 
-        correctAnswer = if (isAddition || num2 <= num1) {
-            binding.questionText.text = "$num1 + $num2 = ?"
-            num1 + num2
+            when (question.type) {
+                QuestionType.TEXT -> {
+                    answerInputLayout.visibility = View.VISIBLE
+                    multipleChoiceLayout.visibility = View.GONE
+                }
+                QuestionType.MULTIPLE_CHOICE -> {
+                    answerInputLayout.visibility = View.GONE
+                    multipleChoiceLayout.visibility = View.VISIBLE
+                    val options = generateMultipleChoiceOptions(question.correctAnswer)
+                    option1.text = options[0].toString()
+                    option2.text = options[1].toString()
+                    option3.text = options[2].toString()
+                    option4.text = options[3].toString()
+                }
+            }
         } else {
-            val (a, b) = if (num1 >= num2) Pair(num1, num2) else Pair(num2, num1)
-            binding.questionText.text = "$a - $b = ?"
-            a - b
-        }
-
-        val incorrectAnswer = correctAnswer + Random.nextInt(1, 10)
-        if (Random.nextBoolean()) {
-            binding.option1.text = correctAnswer.toString()
-            binding.option2.text = incorrectAnswer.toString()
-        } else {
-            binding.option1.text = incorrectAnswer.toString()
-            binding.option2.text = correctAnswer.toString()
-        }
-
-        binding.questionNumberText.text = "Pregunta $currentQuestion de $totalQuestions"
-
-        currentMode = (currentMode + 1) % 3
-        updateUIForCurrentMode()
-    }
-
-    private fun updateUIForCurrentMode() {
-        when (currentMode) {
-            0 -> {
-                binding.answerInputLayout.visibility = View.GONE
-                binding.dragDropLayout.visibility = View.VISIBLE
-                binding.voiceButton.visibility = View.GONE
-            }
-            1 -> {
-                binding.answerInputLayout.visibility = View.VISIBLE
-                binding.dragDropLayout.visibility = View.GONE
-                binding.voiceButton.visibility = View.VISIBLE
-            }
-            2 -> {
-                binding.answerInputLayout.visibility = View.GONE
-                binding.dragDropLayout.visibility = View.GONE
-                binding.voiceButton.visibility = View.VISIBLE
-            }
+            showResults()
         }
     }
 
-    private fun checkAnswer(userAnswer: Int? = null) {
-        val answer = userAnswer ?: binding.answerInput.text.toString().toIntOrNull()
-
-        if (answer == null) {
-            Toast.makeText(this, "Por favor, introduce un número válido", Toast.LENGTH_SHORT).show()
-            return
+    private fun generateMultipleChoiceOptions(correctAnswer: Int): List<Int> {
+        val options = mutableSetOf(correctAnswer)
+        while (options.size < 4) {
+            options.add((1..144).random())
         }
+        return options.shuffled()
+    }
 
-        if (answer == correctAnswer) {
+    private fun checkAnswer() {
+        val question = questions[currentQuestionIndex]
+        val userAnswer = answerInput.text.toString().toIntOrNull()
+
+        if (userAnswer == question.correctAnswer) {
             correctAnswers++
         }
 
-        currentQuestion++
-
-        if (currentQuestion <= totalQuestions) {
-            generateNewQuestion()
-            binding.answerInput.text.clear()
-        } else {
-            finishGame()
-        }
+        currentQuestionIndex++
+        showQuestion()
+        answerInput.text.clear()
     }
 
-    private fun finishGame() {
-        saveGameProgress()
-        val resultIntent = Intent()
-        resultIntent.putExtra("correctAnswers", correctAnswers)
-        setResult(Activity.RESULT_OK, resultIntent)
-        finish()
-    }
-
-    private fun saveGameProgress() {
-        val sharedPreferences = getSharedPreferences("game_progress", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putInt("math_Sumas y Restas_progress", correctAnswers)
-        if (correctAnswers == totalQuestions) {
-            editor.putBoolean("math_Sumas y Restas_completed", true)
-            editor.putBoolean("math_Multiplicaciones_unlocked", true)
+    private fun checkMultipleChoiceAnswer(selectedOptionIndex: Int) {
+        val question = questions[currentQuestionIndex]
+        val selectedOption = when (selectedOptionIndex) {
+            0 -> option1.text.toString().toInt()
+            1 -> option2.text.toString().toInt()
+            2 -> option3.text.toString().toInt()
+            3 -> option4.text.toString().toInt()
+            else -> 0
         }
-        editor.apply()
-        Log.d("MathGamePlayActivity", "saveGameProgress: progress = $correctAnswers, completed = ${correctAnswers == totalQuestions}")
+
+        if (selectedOption == question.correctAnswer) {
+            correctAnswers++
+        }
+
+        currentQuestionIndex++
+        showQuestion()
     }
 
     private fun promptSpeechInput() {
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-ES")
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Di tu respuesta")
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+            putExtra(RecognizerIntent.EXTRA_PROMPT, "Diga la respuesta")
+        }
+
         try {
             startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT)
         } catch (e: Exception) {
-            Toast.makeText(this, "Tu dispositivo no soporta entrada de voz", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "No se pudo acceder a la entrada de voz", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -207,58 +193,49 @@ class MathGamePlayActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_SPEECH_INPUT && resultCode == RESULT_OK && data != null) {
             val result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-            val userAnswerString = result?.get(0)?.let { convertWordToNumber(it) }
-            val userAnswer = userAnswerString?.toIntOrNull()
-            if (userAnswer != null) {
-                checkAnswer(userAnswer)
+            val spokenAnswer = result?.get(0)?.toIntOrNull()
+            if (spokenAnswer != null) {
+                val question = questions[currentQuestionIndex]
+                if (spokenAnswer == question.correctAnswer) {
+                    correctAnswers++
+                }
+
+                currentQuestionIndex++
+                showQuestion()
             } else {
                 Toast.makeText(this, "No se entendió la respuesta. Inténtalo de nuevo.", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun convertWordToNumber(word: String): String {
-        return when (word.lowercase()) {
-            "cero" -> "0"
-            "uno" -> "1"
-            "dos" -> "2"
-            "tres" -> "3"
-            "cuatro" -> "4"
-            "cinco" -> "5"
-            "seis" -> "6"
-            "siete" -> "7"
-            "ocho" -> "8"
-            "nueve" -> "9"
-            "diez" -> "10"
-            "once" -> "11"
-            "doce" -> "12"
-            "trece" -> "13"
-            "catorce" -> "14"
-            "quince" -> "15"
-            "dieciséis" -> "16"
-            "diecisiete" -> "17"
-            "dieciocho" -> "18"
-            "diecinueve" -> "19"
-            "veinte" -> "20"
-            "veintiuno" -> "21"
-            "veintidós" -> "22"
-            "veintitrés" -> "23"
-            "veinticuatro" -> "24"
-            "veinticinco" -> "25"
-            "veintiséis" -> "26"
-            "veintisiete" -> "27"
-            "veintiocho" -> "28"
-            "veintinueve" -> "29"
-            "treinta" -> "30"
-            "treinta y uno" -> "31"
-            "treinta y dos" -> "32"
-            "treinta y tres" -> "33"
-            "treinta y cuatro" -> "34"
-            "treinta y cinco" -> "35"
-            "treinta y seis" -> "36"
-            "treinta y siete" -> "37"
-            "cuarenta" -> "40"
-            else -> word
+    private fun showResults() {
+        saveProgress(gameId, correctAnswers)
+        val intent = Intent(this, GameResultActivity::class.java).apply {
+            putExtra("correctAnswers", correctAnswers)
+            putExtra("totalQuestions", questions.size)
         }
+        startActivity(intent)
+        finish()
     }
+
+    private fun saveProgress(gameId: String, score: Int) {
+        val editor = sharedPreferences.edit()
+        val currentScore = sharedPreferences.getInt(gameId, 0)
+        if (score > currentScore) {
+            editor.putInt(gameId, score)
+        }
+        editor.apply()
+    }
+
+}
+
+data class Question(
+    val text: String,
+    val correctAnswer: Int,
+    val type: QuestionType
+)
+
+enum class QuestionType {
+    TEXT,
+    MULTIPLE_CHOICE
 }

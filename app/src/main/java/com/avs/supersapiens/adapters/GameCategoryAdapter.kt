@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,7 @@ class GameCategoryAdapter(
         val gameIcon: ImageView = itemView.findViewById(R.id.gameIcon)
         val gameTitle: TextView = itemView.findViewById(R.id.gameTitle)
         val categoryProgress: TextView = itemView.findViewById(R.id.categoryProgress)
+        val cardContent: LinearLayout = itemView.findViewById(R.id.cardContent)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameCategoryViewHolder {
@@ -30,6 +32,7 @@ class GameCategoryAdapter(
         val category = categories[position]
         holder.gameIcon.setImageResource(category.iconResId)
         holder.gameTitle.text = category.title
+        holder.categoryProgress.text = "${category.completedGames}/${category.totalGames}"
 
         val context = holder.itemView.context
         val backgroundColor = when (category.category) {
@@ -38,10 +41,7 @@ class GameCategoryAdapter(
             "science" -> ContextCompat.getColor(context, R.color.colorScience)
             else -> ContextCompat.getColor(context, R.color.white)
         }
-        holder.itemView.setBackgroundColor(backgroundColor)
-
-        val progressText = "${category.gamesCompleted}/${category.totalGames}"
-        holder.categoryProgress.text = progressText
+        holder.cardContent.setBackgroundColor(backgroundColor)
 
         holder.itemView.setOnClickListener { clickListener(category) }
     }

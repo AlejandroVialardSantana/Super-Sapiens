@@ -1,10 +1,9 @@
 package com.avs.supersapiens.models
 
 data class Game(
+    val id: String,
     val title: String,
     val iconResId: Int,
-    var isUnlocked: Boolean = false,
-    var questionsAnswered: Int = 0,
-    val totalQuestions: Int = 10,
-    var isCompleted: Boolean = false
+    val type: String,
+    var score: Int = 0
 )
