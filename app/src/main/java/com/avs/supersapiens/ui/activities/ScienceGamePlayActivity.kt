@@ -3,7 +3,6 @@ package com.avs.supersapiens.ui.activities
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.avs.supersapiens.databinding.ActivityScienceGamePlayBinding
 import com.avs.supersapiens.enums.QuestionType
@@ -30,7 +29,7 @@ class ScienceGamePlayActivity : AppCompatActivity() {
         gameId = intent.getStringExtra("gameId") ?: return
         correctAnswers = 0
 
-        questions = QuestionGenerator.generateAnimalQuestions().take(10)
+        questions = QuestionGenerator.generateAnimalQuestions()
 
         binding.submitButton.setOnClickListener { checkAnswer() }
         binding.option1.setOnClickListener { checkMultipleChoiceAnswer(0) }
@@ -51,28 +50,22 @@ class ScienceGamePlayActivity : AppCompatActivity() {
                 QuestionType.IMAGE_IDENTIFICATION -> {
                     binding.answerInputLayout.visibility = View.VISIBLE
                     binding.multipleChoiceLayout.visibility = View.GONE
-                    binding.questionImage.visibility = View.VISIBLE
+                    binding.voiceButton.visibility = View.VISIBLE
                     val animal = QuestionGenerator.getAnimalByIndex(question.correctAnswer)
                     binding.questionImage.setImageResource(animal.imageResId)
                 }
                 QuestionType.IMAGE_MULTIPLE_CHOICE -> {
                     binding.answerInputLayout.visibility = View.GONE
                     binding.multipleChoiceLayout.visibility = View.VISIBLE
-                    binding.questionImage.visibility = View.GONE
+                    binding.voiceButton.visibility = View.GONE
 
-                    val correctAnimal = QuestionGenerator.getAnimalByIndex(question.correctAnswer)
-                    var incorrectAnimals = QuestionGenerator.getRandomAnimals(3).filter { it != correctAnimal }
+                    // Obtenemos las opciones incorrectas de la variable temporal
+                    val options = QuestionGenerator.questionOptions[currentQuestionIndex]?.map { QuestionGenerator.getAnimalByIndex(it) } ?: emptyList()
 
-                    // Ensure there are always 3 incorrect options
-                    while (incorrectAnimals.size < 3) {
-                        incorrectAnimals = incorrectAnimals + QuestionGenerator.getRandomAnimals(3 - incorrectAnimals.size).filter { it != correctAnimal && !incorrectAnimals.contains(it) }
-                    }
-
-                    val options = (listOf(correctAnimal) + incorrectAnimals).shuffled()
-                    binding.option1.setBackgroundResource(options[0].imageResId)
-                    binding.option2.setBackgroundResource(options[1].imageResId)
-                    binding.option3.setBackgroundResource(options[2].imageResId)
-                    binding.option4.setBackgroundResource(options[3].imageResId)
+                    binding.option1.setImageResource(options[0].imageResId)
+                    binding.option2.setImageResource(options[1].imageResId)
+                    binding.option3.setImageResource(options[2].imageResId)
+                    binding.option4.setImageResource(options[3].imageResId)
 
                     binding.option1.tag = options[0].imageResId
                     binding.option2.tag = options[1].imageResId
@@ -80,7 +73,7 @@ class ScienceGamePlayActivity : AppCompatActivity() {
                     binding.option4.tag = options[3].imageResId
                 }
                 else -> {
-                    Toast.makeText(this, "Tipo de pregunta no soportada", Toast.LENGTH_SHORT).show()
+                    // Handle other types if any
                 }
             }
         } else {
@@ -90,9 +83,9 @@ class ScienceGamePlayActivity : AppCompatActivity() {
 
     private fun checkAnswer() {
         val question = questions[currentQuestionIndex]
-        val userAnswer = binding.answerInput.text.toString().lowercase()
+        val userAnswer = binding.answerInput.text.toString()
 
-        if (QuestionGenerator.getAnimalByIndex(question.correctAnswer).name == userAnswer) {
+        if (userAnswer.equals(QuestionGenerator.getAnimalByIndex(question.correctAnswer).name, ignoreCase = true)) {
             correctAnswers++
         }
 

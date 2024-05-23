@@ -22,8 +22,8 @@ object QuestionGenerator {
         Animal("pato", R.drawable.ic_animal_11, "ave")
     )
 
-    fun getRandomAnimals(number: Int): List<Animal> {
-        return animals.shuffled().take(number)
+    fun getRandomAnimals(number: Int, exclude: List<Animal> = emptyList()): List<Animal> {
+        return animals.filter { it !in exclude }.shuffled().take(number)
     }
 
     fun generateAnimalQuestions(): List<Question> {
@@ -35,9 +35,12 @@ object QuestionGenerator {
             val correctAnimals = animals.filter { it.type == type }
             val incorrectAnimals = animals.filter { it.type != type }
 
-            if (correctAnimals.isNotEmpty() && incorrectAnimals.isNotEmpty()) {
+            if (correctAnimals.isNotEmpty() && incorrectAnimals.size >= 3) {
                 val correctAnimal = correctAnimals.random()
-                val incorrectAnimal = incorrectAnimals.random()
+                val incorrectOptions = incorrectAnimals.shuffled().take(3)
+
+                // Guardamos las opciones incorrectas en una variable temporal
+                val options = (listOf(correctAnimal) + incorrectOptions).shuffled()
 
                 questions.add(
                     Question(
@@ -46,11 +49,14 @@ object QuestionGenerator {
                         QuestionType.IMAGE_MULTIPLE_CHOICE
                     )
                 )
+
+                // Aquí guardamos las opciones incorrectas para usarlas en la actividad
+                questionOptions[questions.size - 1] = options.map { animals.indexOf(it) }
             }
         }
 
         // Generar preguntas de identificación
-        val randomAnimals = getRandomAnimals(10)
+        val randomAnimals = getRandomAnimals(10 - questions.size)
         for (animal in randomAnimals) {
             questions.add(
                 Question(
@@ -61,10 +67,13 @@ object QuestionGenerator {
             )
         }
 
-        return questions
+        return questions.take(10)
     }
 
     fun getAnimalByIndex(index: Int): Animal {
         return animals[index]
     }
+
+    // Variable temporal para guardar las opciones incorrectas
+    val questionOptions = mutableMapOf<Int, List<Int>>()
 }
