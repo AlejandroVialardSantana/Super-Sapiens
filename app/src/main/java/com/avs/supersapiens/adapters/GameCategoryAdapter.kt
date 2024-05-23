@@ -12,7 +12,7 @@ import com.avs.supersapiens.R
 import com.avs.supersapiens.models.GameCategory
 
 class GameCategoryAdapter(
-    private val categories: List<GameCategory>,
+    private var categories: List<GameCategory>,
     private val clickListener: (GameCategory) -> Unit
 ) : RecyclerView.Adapter<GameCategoryAdapter.GameCategoryViewHolder>() {
 
@@ -47,4 +47,9 @@ class GameCategoryAdapter(
     }
 
     override fun getItemCount() = categories.size
+
+    fun updateCategories(newCategories: List<GameCategory>) {
+        categories = newCategories
+        notifyDataSetChanged()
+    }
 }

@@ -12,8 +12,7 @@ import com.avs.supersapiens.R
 import com.avs.supersapiens.models.Game
 
 class GameAdapter(
-    private val games: List<Game>,
-    private val category: String,
+    private var games: List<Game>,
     private val clickListener: (Game) -> Unit
 ) : RecyclerView.Adapter<GameAdapter.GameViewHolder>() {
 
@@ -33,14 +32,16 @@ class GameAdapter(
         val game = games[position]
         holder.gameIcon.setImageResource(game.iconResId)
         holder.gameTitle.text = game.title
-        holder.gameScore.text = "${game.score}/10" // Mostrar el puntaje
+        holder.gameScore.text = "${game.score}/10"
 
-        // Set background color based on category
         val context = holder.itemView.context
-        val backgroundColor = when (category) {
-            "math" -> ContextCompat.getColor(context, R.color.colorMath)
-            "english" -> ContextCompat.getColor(context, R.color.colorEnglish)
-            "science" -> ContextCompat.getColor(context, R.color.colorScience)
+        val backgroundColor = when (game.type) {
+            "sum" -> ContextCompat.getColor(context, R.color.colorMath)
+            "multiply" -> ContextCompat.getColor(context, R.color.colorMath)
+            "word" -> ContextCompat.getColor(context, R.color.colorEnglish)
+            "vocabulary" -> ContextCompat.getColor(context, R.color.colorEnglish)
+            "animals" -> ContextCompat.getColor(context, R.color.colorScience)
+            "solar" -> ContextCompat.getColor(context, R.color.colorScience)
             else -> ContextCompat.getColor(context, R.color.white)
         }
         holder.gameCardContent.setBackgroundColor(backgroundColor)
@@ -49,4 +50,9 @@ class GameAdapter(
     }
 
     override fun getItemCount() = games.size
+
+    fun updateGames(newGames: List<Game>) {
+        games = newGames
+        notifyDataSetChanged()
+    }
 }
