@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.avs.supersapiens.adapters.GameAdapter
 import com.avs.supersapiens.databinding.FragmentGameListBinding
 import com.avs.supersapiens.ui.activities.MathGamePlayActivity
+import com.avs.supersapiens.ui.activities.ScienceGamePlayActivity
 import com.avs.supersapiens.viewmodels.GameListViewModel
 
 class GameListFragment : Fragment() {
@@ -32,7 +33,11 @@ class GameListFragment : Fragment() {
         val category = arguments?.getString("category") ?: return
 
         val adapter = GameAdapter(emptyList()) { game ->
-            val intent = Intent(context, MathGamePlayActivity::class.java).apply {
+            val intent = when (category) {
+                "math" -> Intent(context, MathGamePlayActivity::class.java)
+                "science" -> Intent(context, ScienceGamePlayActivity::class.java)
+                else -> Intent(context, MathGamePlayActivity::class.java)
+            }.apply {
                 putExtra("gameId", game.id)
                 putExtra("gameType", game.type)
                 putExtra("gameScore", game.score)
