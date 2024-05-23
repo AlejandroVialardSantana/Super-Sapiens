@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.avs.supersapiens.databinding.ActivityMathGamePlayBinding
 import com.avs.supersapiens.enums.QuestionType
 import com.avs.supersapiens.models.Question
+import com.avs.supersapiens.utils.NumberConverter
 import com.avs.supersapiens.utils.ProgressManager
 import java.util.*
 
@@ -167,10 +168,11 @@ class MathGamePlayActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_SPEECH_INPUT && resultCode == RESULT_OK && data != null) {
             val result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-            val spokenAnswer = result?.get(0)?.toIntOrNull()
-            if (spokenAnswer != null) {
+            val spokenAnswerText = result?.get(0)?.let { NumberConverter.convertWordToNumber(it) }
+            val spokenAnswerNumber = spokenAnswerText?.toIntOrNull()
+            if (spokenAnswerNumber != null) {
                 val question = questions[currentQuestionIndex]
-                if (spokenAnswer == question.correctAnswer) {
+                if (spokenAnswerNumber == question.correctAnswer) {
                     correctAnswers++
                 }
 
@@ -183,7 +185,6 @@ class MathGamePlayActivity : AppCompatActivity() {
     }
 
     private fun showResults() {
-        progressManager.clearAllScores()
         progressManager.saveScore(gameId, correctAnswers)
         val intent = Intent(this, GameResultActivity::class.java).apply {
             putExtra("correctAnswers", correctAnswers)
