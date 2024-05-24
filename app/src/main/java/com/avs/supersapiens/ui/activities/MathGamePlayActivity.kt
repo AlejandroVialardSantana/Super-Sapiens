@@ -69,10 +69,7 @@ class MathGamePlayActivity : AppCompatActivity() {
                     binding.option3.text = options[2].toString()
                     binding.option4.text = options[3].toString()
                 }
-                QuestionType.IMAGE_IDENTIFICATION -> {
-                }
-                QuestionType.IMAGE_MULTIPLE_CHOICE -> {
-                }
+                else -> return
             }
         } else {
             showResults()

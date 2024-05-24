@@ -87,7 +87,54 @@ object QuestionGenerator {
         return questions.take(10)
     }
 
+    fun generateEnglishQuestions(): List<Question> {
+        val questions = mutableListOf<Question>()
+
+        // Preguntas de arrastrar y soltar letras
+        val randomWords = EnglishData.getRandomWords(5)
+        for (word in randomWords) {
+            questions.add(
+                Question(
+                    "Ordena las letras para formar la palabra",
+                    EnglishData.words.indexOf(word),
+                    QuestionType.DRAG_AND_DROP
+                )
+            )
+        }
+
+        // Preguntas de elección múltiple sobre palabras
+        val wordImages = EnglishData.words.map { it.imageResId }.distinct()
+        for (image in wordImages) {
+            val correctWords = EnglishData.words.filter { it.imageResId == image }
+            val incorrectWords = EnglishData.words.filter { it.imageResId != image }
+
+            if (correctWords.isNotEmpty() && incorrectWords.size >= 3) {
+                val correctWord = correctWords.random()
+                val incorrectOptions = incorrectWords.shuffled().take(3)
+                val options = (listOf(correctWord) + incorrectOptions).shuffled()
+
+                questions.add(
+                    Question(
+                        "¿Cuál de estos es la palabra correcta?",
+                        EnglishData.words.indexOf(correctWord),
+                        QuestionType.IMAGE_MULTIPLE_CHOICE
+                    )
+                )
+                questionOptions[questions.size - 1] = options.map { EnglishData.words.indexOf(it) }
+            }
+        }
+
+        return questions.take(10)
+    }
+
+    fun getShuffledWord(index: Int): String {
+        val word = EnglishData.getWordByIndex(index).name
+        return EnglishData.shuffleWord(word)
+    }
+
     fun getPlanetByIndex(index: Int) = PlanetData.getPlanetByIndex(index)
 
     fun getAnimalByIndex(index: Int) = AnimalData.getAnimalByIndex(index)
+
+    fun getWordByIndex(index: Int) = EnglishData.getWordByIndex(index)
 }

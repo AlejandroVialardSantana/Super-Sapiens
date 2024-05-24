@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.avs.supersapiens.adapters.GameAdapter
 import com.avs.supersapiens.databinding.FragmentGameListBinding
+import com.avs.supersapiens.ui.activities.EnglishGamePlayActivity
 import com.avs.supersapiens.ui.activities.MathGamePlayActivity
 import com.avs.supersapiens.ui.activities.ScienceGamePlayActivity
 import com.avs.supersapiens.ui.activities.SolarSystemGamePlayActivity
@@ -38,6 +39,7 @@ class GameListFragment : Fragment() {
                 "sum", "multiply" -> Intent(context, MathGamePlayActivity::class.java)
                 "animals" -> Intent(context, ScienceGamePlayActivity::class.java)
                 "solar" -> Intent(context, SolarSystemGamePlayActivity::class.java)
+                "word", "vocabulary" -> Intent(context, EnglishGamePlayActivity::class.java)
                 else -> Intent(context, MathGamePlayActivity::class.java)
             }.apply {
                 putExtra("gameId", game.id)
