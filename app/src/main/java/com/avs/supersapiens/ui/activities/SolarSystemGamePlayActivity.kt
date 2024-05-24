@@ -52,10 +52,12 @@ class SolarSystemGamePlayActivity : AppCompatActivity() {
                     binding.multipleChoiceLayout.visibility = View.GONE
                     binding.answerInput.visibility = View.VISIBLE
                     binding.submitButton.visibility = View.VISIBLE
+                    binding.voiceButton.visibility = View.VISIBLE
                     binding.option1.visibility = View.GONE
                     binding.option2.visibility = View.GONE
                     binding.option3.visibility = View.GONE
                     binding.option4.visibility = View.GONE
+                    binding.questionImage.visibility = View.VISIBLE
                     val planet = QuestionGenerator.getPlanetByIndex(question.correctAnswer)
                     binding.questionImage.setImageResource(planet.imageResId)
                 }
@@ -68,6 +70,8 @@ class SolarSystemGamePlayActivity : AppCompatActivity() {
                     binding.option2.visibility = View.VISIBLE
                     binding.option3.visibility = View.VISIBLE
                     binding.option4.visibility = View.VISIBLE
+                    binding.voiceButton.visibility = View.GONE
+                    binding.questionImage.visibility = View.GONE
 
                     val options = QuestionGenerator.questionOptions[currentQuestionIndex]?.map { QuestionGenerator.getPlanetByIndex(it) } ?: emptyList()
 

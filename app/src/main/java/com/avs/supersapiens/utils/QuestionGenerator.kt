@@ -1,8 +1,6 @@
 package com.avs.supersapiens.utils
 
 import com.avs.supersapiens.enums.QuestionType
-import com.avs.supersapiens.models.Animal
-import com.avs.supersapiens.models.Planet
 import com.avs.supersapiens.models.Question
 
 object QuestionGenerator {
@@ -69,15 +67,16 @@ object QuestionGenerator {
             )
         }
 
-        // Preguntas de elección múltiple sobre la posición de los planetas
-        for (planet in planetData) {
-            val correctPlanet = planet
-            val incorrectOptions = planetData.filter { it != correctPlanet }.shuffled().take(3)
+        // Preguntas de elección múltiple sobre la posición de los planetas (aleatorias)
+        val positions = (1..8).shuffled().take(5)
+        for (position in positions) {
+            val correctPlanet = planetData.first { it.position == position }
+            val incorrectOptions = planetData.filter { it.position != position }.shuffled().take(3)
             val options = (listOf(correctPlanet) + incorrectOptions).shuffled()
 
             questions.add(
                 Question(
-                    "¿Cuál de estos planetas ocupa la posición ${correctPlanet.position} en el sistema solar?",
+                    "¿Cuál de estos planetas ocupa la posición $position en el sistema solar?",
                     planetData.indexOf(correctPlanet),
                     QuestionType.IMAGE_MULTIPLE_CHOICE
                 )
@@ -88,7 +87,7 @@ object QuestionGenerator {
         return questions.take(10)
     }
 
-    fun getPlanetByIndex(index: Int) : Planet = PlanetData.getPlanetByIndex(index)
+    fun getPlanetByIndex(index: Int) = PlanetData.getPlanetByIndex(index)
 
-    fun getAnimalByIndex(index: Int) : Animal = AnimalData.animals[index]
+    fun getAnimalByIndex(index: Int) = AnimalData.getAnimalByIndex(index)
 }
