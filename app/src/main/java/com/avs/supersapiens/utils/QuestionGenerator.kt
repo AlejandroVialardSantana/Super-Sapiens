@@ -2,6 +2,7 @@ package com.avs.supersapiens.utils
 
 import com.avs.supersapiens.enums.QuestionType
 import com.avs.supersapiens.models.Animal
+import com.avs.supersapiens.models.Planet
 import com.avs.supersapiens.models.Question
 
 object QuestionGenerator {
@@ -9,8 +10,6 @@ object QuestionGenerator {
 
     fun generateAnimalQuestions(): List<Question> {
         val questions = mutableListOf<Question>()
-
-        // Generar preguntas para tipos de animales
         val animalTypes = AnimalData.animals.map { it.type }.distinct()
         for (type in animalTypes) {
             val correctAnimals = AnimalData.animals.filter { it.type == type }
@@ -19,8 +18,6 @@ object QuestionGenerator {
             if (correctAnimals.isNotEmpty() && incorrectAnimals.size >= 3) {
                 val correctAnimal = correctAnimals.random()
                 val incorrectOptions = incorrectAnimals.shuffled().take(3)
-
-                // Guardamos las opciones incorrectas en una variable temporal
                 val options = (listOf(correctAnimal) + incorrectOptions).shuffled()
 
                 questions.add(
@@ -30,13 +27,10 @@ object QuestionGenerator {
                         QuestionType.IMAGE_MULTIPLE_CHOICE
                     )
                 )
-
-                // Aquí guardamos las opciones incorrectas para usarlas en la actividad
                 questionOptions[questions.size - 1] = options.map { AnimalData.animals.indexOf(it) }
             }
         }
 
-        // Generar preguntas de identificación
         val randomAnimals = AnimalData.getRandomAnimals(10 - questions.size)
         for (animal in randomAnimals) {
             questions.add(
@@ -59,7 +53,42 @@ object QuestionGenerator {
         }
     }
 
-    fun getAnimalByIndex(index: Int): Animal {
-        return AnimalData.getAnimalByIndex(index)
+    fun generateSolarSystemQuestions(): List<Question> {
+        val questions = mutableListOf<Question>()
+        val planetData = PlanetData.planets
+
+        // Preguntas de identificación de planetas
+        val randomPlanets = PlanetData.getRandomPlanets(5)
+        for (planet in randomPlanets) {
+            questions.add(
+                Question(
+                    "¿Qué planeta es este?",
+                    planetData.indexOf(planet),
+                    QuestionType.IMAGE_IDENTIFICATION
+                )
+            )
+        }
+
+        // Preguntas de elección múltiple sobre la posición de los planetas
+        for (planet in planetData) {
+            val correctPlanet = planet
+            val incorrectOptions = planetData.filter { it != correctPlanet }.shuffled().take(3)
+            val options = (listOf(correctPlanet) + incorrectOptions).shuffled()
+
+            questions.add(
+                Question(
+                    "¿Cuál de estos planetas ocupa la posición ${correctPlanet.position} en el sistema solar?",
+                    planetData.indexOf(correctPlanet),
+                    QuestionType.IMAGE_MULTIPLE_CHOICE
+                )
+            )
+            questionOptions[questions.size - 1] = options.map { planetData.indexOf(it) }
+        }
+
+        return questions.take(10)
     }
+
+    fun getPlanetByIndex(index: Int) : Planet = PlanetData.getPlanetByIndex(index)
+
+    fun getAnimalByIndex(index: Int) : Animal = AnimalData.animals[index]
 }
