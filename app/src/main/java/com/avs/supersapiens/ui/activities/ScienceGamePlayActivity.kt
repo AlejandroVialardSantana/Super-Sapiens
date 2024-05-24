@@ -56,6 +56,8 @@ class ScienceGamePlayActivity : AppCompatActivity() {
                     binding.answerInputLayout.visibility = View.VISIBLE
                     binding.multipleChoiceLayout.visibility = View.GONE
                     binding.voiceButton.visibility = View.VISIBLE
+                    binding.answerInput.visibility = View.VISIBLE
+                    binding.submitButton.visibility = View.VISIBLE
                     val animal = QuestionGenerator.getAnimalByIndex(question.correctAnswer)
                     binding.questionImage.setImageResource(animal.imageResId)
                 }
@@ -63,6 +65,8 @@ class ScienceGamePlayActivity : AppCompatActivity() {
                     binding.answerInputLayout.visibility = View.GONE
                     binding.multipleChoiceLayout.visibility = View.VISIBLE
                     binding.voiceButton.visibility = View.GONE
+                    binding.answerInput.visibility = View.GONE
+                    binding.submitButton.visibility = View.GONE
 
                     val options = QuestionGenerator.questionOptions[currentQuestionIndex]?.map { QuestionGenerator.getAnimalByIndex(it) } ?: emptyList()
 
