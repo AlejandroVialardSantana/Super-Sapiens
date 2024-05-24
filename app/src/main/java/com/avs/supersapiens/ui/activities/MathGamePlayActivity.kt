@@ -9,8 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.avs.supersapiens.databinding.ActivityMathGamePlayBinding
 import com.avs.supersapiens.enums.QuestionType
 import com.avs.supersapiens.models.Question
+import com.avs.supersapiens.utils.MathData
 import com.avs.supersapiens.utils.NumberConverter
 import com.avs.supersapiens.utils.ProgressManager
+import com.avs.supersapiens.utils.QuestionGenerator
 import java.util.*
 
 class MathGamePlayActivity : AppCompatActivity() {
@@ -35,7 +37,7 @@ class MathGamePlayActivity : AppCompatActivity() {
         val gameType = intent.getStringExtra("gameType") ?: return
         correctAnswers = 0
 
-        questions = generateQuestions(gameType)
+        questions = QuestionGenerator.generateMathQuestions(gameType)
 
         binding.submitButton.setOnClickListener { checkAnswer() }
         binding.option1.setOnClickListener { checkMultipleChoiceAnswer(0) }
@@ -45,44 +47,6 @@ class MathGamePlayActivity : AppCompatActivity() {
         binding.voiceButton.setOnClickListener { promptSpeechInput() }
 
         showQuestion()
-    }
-
-    private fun generateQuestions(gameType: String): List<Question> {
-        return when (gameType) {
-            "sum" -> generateSumAndSubtractQuestions()
-            "multiply" -> generateMultiplicationQuestions()
-            else -> emptyList()
-        }
-    }
-
-    private fun generateSumAndSubtractQuestions(): List<Question> {
-        val questions = mutableListOf<Question>()
-        while (questions.size < 10) {
-            val num1 = Random().nextInt(20) + 1
-            val num2 = Random().nextInt(20) + 1
-            val isAddition = Random().nextBoolean()
-            if (isAddition) {
-                val correctAnswer = num1 + num2
-                questions.add(Question("$num1 + $num2 = ?", correctAnswer, QuestionType.TEXT))
-            } else {
-                val correctAnswer = num1 - num2
-                if (correctAnswer >= 0) {
-                    questions.add(Question("$num1 - $num2 = ?", correctAnswer, QuestionType.TEXT))
-                }
-            }
-        }
-        return questions
-    }
-
-    private fun generateMultiplicationQuestions(): List<Question> {
-        val questions = mutableListOf<Question>()
-        while (questions.size < 10) {
-            val num1 = Random().nextInt(12) + 1
-            val num2 = Random().nextInt(12) + 1
-            val correctAnswer = num1 * num2
-            questions.add(Question("$num1 * $num2 = ?", correctAnswer, QuestionType.MULTIPLE_CHOICE))
-        }
-        return questions
     }
 
     private fun showQuestion() {
@@ -99,7 +63,7 @@ class MathGamePlayActivity : AppCompatActivity() {
                 QuestionType.MULTIPLE_CHOICE -> {
                     binding.answerInputLayout.visibility = View.GONE
                     binding.multipleChoiceLayout.visibility = View.VISIBLE
-                    val options = generateMultipleChoiceOptions(question.correctAnswer)
+                    val options = MathData.generateMultipleChoiceOptions(question.correctAnswer)
                     binding.option1.text = options[0].toString()
                     binding.option2.text = options[1].toString()
                     binding.option3.text = options[2].toString()
@@ -113,14 +77,6 @@ class MathGamePlayActivity : AppCompatActivity() {
         } else {
             showResults()
         }
-    }
-
-    private fun generateMultipleChoiceOptions(correctAnswer: Int): List<Int> {
-        val options = mutableSetOf(correctAnswer)
-        while (options.size < 4) {
-            options.add((1..144).random())
-        }
-        return options.shuffled()
     }
 
     private fun checkAnswer() {

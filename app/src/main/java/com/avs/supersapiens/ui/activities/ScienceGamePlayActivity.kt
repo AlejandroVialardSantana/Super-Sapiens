@@ -2,13 +2,16 @@ package com.avs.supersapiens.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.speech.RecognizerIntent
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.avs.supersapiens.databinding.ActivityScienceGamePlayBinding
 import com.avs.supersapiens.enums.QuestionType
 import com.avs.supersapiens.models.Question
 import com.avs.supersapiens.utils.ProgressManager
 import com.avs.supersapiens.utils.QuestionGenerator
+import java.util.Locale
 
 class ScienceGamePlayActivity : AppCompatActivity() {
     private lateinit var binding: ActivityScienceGamePlayBinding
@@ -18,6 +21,7 @@ class ScienceGamePlayActivity : AppCompatActivity() {
     private var correctAnswers = 0
     private var questions: List<Question> = emptyList()
     private lateinit var gameId: String
+    private val REQUEST_CODE_SPEECH_INPUT = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +40,7 @@ class ScienceGamePlayActivity : AppCompatActivity() {
         binding.option2.setOnClickListener { checkMultipleChoiceAnswer(1) }
         binding.option3.setOnClickListener { checkMultipleChoiceAnswer(2) }
         binding.option4.setOnClickListener { checkMultipleChoiceAnswer(3) }
+        binding.voiceButton.setOnClickListener { promptSpeechInput() }
 
         showQuestion()
     }
@@ -59,7 +64,6 @@ class ScienceGamePlayActivity : AppCompatActivity() {
                     binding.multipleChoiceLayout.visibility = View.VISIBLE
                     binding.voiceButton.visibility = View.GONE
 
-                    // Obtenemos las opciones incorrectas de la variable temporal
                     val options = QuestionGenerator.questionOptions[currentQuestionIndex]?.map { QuestionGenerator.getAnimalByIndex(it) } ?: emptyList()
 
                     binding.option1.setImageResource(options[0].imageResId)
@@ -110,6 +114,39 @@ class ScienceGamePlayActivity : AppCompatActivity() {
 
         currentQuestionIndex++
         showQuestion()
+    }
+
+    private fun promptSpeechInput() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+            putExtra(RecognizerIntent.EXTRA_PROMPT, "Diga la respuesta")
+        }
+
+        try {
+            startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT)
+        } catch (e: Exception) {
+            Toast.makeText(this, "No se pudo acceder a la entrada de voz", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_SPEECH_INPUT && resultCode == RESULT_OK && data != null) {
+            val result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            val spokenAnswerText = result?.get(0)
+            if (spokenAnswerText != null) {
+                val question = questions[currentQuestionIndex]
+                if (spokenAnswerText.equals(QuestionGenerator.getAnimalByIndex(question.correctAnswer).name, ignoreCase = true)) {
+                    correctAnswers++
+                }
+
+                currentQuestionIndex++
+                showQuestion()
+            } else {
+                Toast.makeText(this, "No se entendió la respuesta. Inténtalo de nuevo.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun showResults() {
