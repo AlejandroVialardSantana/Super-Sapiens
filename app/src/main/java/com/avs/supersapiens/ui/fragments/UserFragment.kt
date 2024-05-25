@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.avs.supersapiens.R
 import com.avs.supersapiens.databinding.FragmentUserBinding
@@ -48,15 +49,42 @@ class UserFragment : Fragment(), AvatarSelectionDialog.AvatarSelectionListener {
             showAvatarSelectionDialog()
         }
 
-        val clearScoresButton: Button = binding.clearScoresButton
-        clearScoresButton.setOnClickListener {
-            progressManager.clearAllScores()
+        binding.clearScoresButton.setOnClickListener {
+            showClearScoresConfirmationDialog()
         }
     }
 
     private fun showAvatarSelectionDialog() {
         val avatarSelectionDialog = AvatarSelectionDialog(requireContext(), this)
         avatarSelectionDialog.show()
+    }
+
+    private fun showClearScoresConfirmationDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        val inflater = layoutInflater
+        val dialogView = inflater.inflate(R.layout.dialog_confirm_clear_scores, null)
+        builder.setView(dialogView)
+
+        val dialog = builder.create()
+
+        val btnYes: Button = dialogView.findViewById(R.id.btnYes)
+        val btnNo: Button = dialogView.findViewById(R.id.btnNo)
+
+        btnYes.setOnClickListener {
+            progressManager.clearAllScores()
+            dialog.dismiss()
+
+            val intent = Intent(requireContext(), MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+
+        }
+
+        btnNo.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     private fun pickImageFromGallery() {
