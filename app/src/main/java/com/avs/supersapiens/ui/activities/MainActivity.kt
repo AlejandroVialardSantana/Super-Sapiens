@@ -11,9 +11,9 @@ import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.avs.supersapiens.R
-import com.avs.supersapiens.utils.ProgressManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
@@ -21,7 +21,6 @@ import com.bumptech.glide.request.transition.Transition
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var progressManager: ProgressManager
     private lateinit var userIcon: ImageView
     private lateinit var progressBar: ProgressBar
 
@@ -29,13 +28,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        progressManager = ProgressManager(this)
-
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         val navController = findNavController(R.id.nav_host_fragment)
-        setupActionBarWithNavController(navController)
+        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        supportActionBar?.setDisplayShowTitleEnabled(false) // Deshabilitar el título
 
         userIcon = findViewById(R.id.userIcon)
         progressBar = findViewById(R.id.progressBar)
@@ -49,12 +48,6 @@ class MainActivity : AppCompatActivity() {
 
         // Cargar la imagen de perfil
         loadProfileImage(userIcon)
-
-        // Botón para borrar las preferencias
-        val clearScoresButton: ImageView = findViewById(R.id.clearScoresButton)
-        clearScoresButton.setOnClickListener {
-            progressManager.clearAllScores()
-        }
     }
 
     private fun loadProfileImage(userIcon: ImageView) {

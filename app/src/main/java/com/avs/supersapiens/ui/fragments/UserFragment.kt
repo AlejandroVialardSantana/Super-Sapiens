@@ -10,9 +10,13 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import com.avs.supersapiens.R
 import com.avs.supersapiens.databinding.FragmentUserBinding
 import com.avs.supersapiens.ui.activities.MainActivity
+import com.avs.supersapiens.utils.ProgressManager
 import com.yalantis.ucrop.UCrop
 import java.io.File
 import java.io.InputStream
@@ -23,6 +27,7 @@ class UserFragment : Fragment(), AvatarSelectionDialog.AvatarSelectionListener {
     private lateinit var binding: FragmentUserBinding
     private val PICK_IMAGE_REQUEST = 1
     private val UCROP_REQUEST_CODE = UCrop.REQUEST_CROP
+    private lateinit var progressManager: ProgressManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,10 +40,17 @@ class UserFragment : Fragment(), AvatarSelectionDialog.AvatarSelectionListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        progressManager = ProgressManager(requireContext())
+
         loadProfileImage()
 
         binding.changeAvatarButton.setOnClickListener {
             showAvatarSelectionDialog()
+        }
+
+        val clearScoresButton: Button = binding.clearScoresButton
+        clearScoresButton.setOnClickListener {
+            progressManager.clearAllScores()
         }
     }
 

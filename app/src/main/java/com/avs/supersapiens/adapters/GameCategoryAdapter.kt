@@ -17,8 +17,8 @@ class GameCategoryAdapter(
 ) : RecyclerView.Adapter<GameCategoryAdapter.GameCategoryViewHolder>() {
 
     class GameCategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val gameIcon: ImageView = itemView.findViewById(R.id.gameIcon)
-        val gameTitle: TextView = itemView.findViewById(R.id.gameTitle)
+        val categoryIcon: ImageView = itemView.findViewById(R.id.categoryIcon)
+        val categoryTitle: TextView = itemView.findViewById(R.id.categoryTitle)
         val categoryProgress: TextView = itemView.findViewById(R.id.categoryProgress)
         val cardContent: LinearLayout = itemView.findViewById(R.id.cardContent)
     }
@@ -30,8 +30,8 @@ class GameCategoryAdapter(
 
     override fun onBindViewHolder(holder: GameCategoryViewHolder, position: Int) {
         val category = categories[position]
-        holder.gameIcon.setImageResource(category.iconResId)
-        holder.gameTitle.text = category.title
+        holder.categoryIcon.setImageResource(category.iconResId)
+        holder.categoryTitle.text = category.title
         holder.categoryProgress.text = "${category.completedGames}/${category.totalGames}"
 
         val context = holder.itemView.context
