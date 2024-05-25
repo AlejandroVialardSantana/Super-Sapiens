@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.avs.supersapiens.R
 import com.avs.supersapiens.databinding.FragmentUserBinding
 import com.avs.supersapiens.ui.activities.MainActivity
 import com.yalantis.ucrop.UCrop
@@ -19,7 +18,7 @@ import java.io.File
 import java.io.InputStream
 import java.util.*
 
-class UserFragment : Fragment() {
+class UserFragment : Fragment(), AvatarSelectionDialog.AvatarSelectionListener {
 
     private lateinit var binding: FragmentUserBinding
     private val PICK_IMAGE_REQUEST = 1
@@ -39,20 +38,13 @@ class UserFragment : Fragment() {
         loadProfileImage()
 
         binding.changeAvatarButton.setOnClickListener {
-            pickImageFromGallery()
+            showAvatarSelectionDialog()
         }
+    }
 
-        binding.avatarExample1.setOnClickListener {
-            setProfileImageResource(R.drawable.ic_avatar_1)
-        }
-
-        binding.avatarExample2.setOnClickListener {
-            setProfileImageResource(R.drawable.ic_avatar_2)
-        }
-
-        binding.avatarExample3.setOnClickListener {
-            setProfileImageResource(R.drawable.ic_avatar_3)
-        }
+    private fun showAvatarSelectionDialog() {
+        val avatarSelectionDialog = AvatarSelectionDialog(requireContext(), this)
+        avatarSelectionDialog.show()
     }
 
     private fun pickImageFromGallery() {
@@ -124,5 +116,13 @@ class UserFragment : Fragment() {
                 setProfileImageResource(resourceId)
             }
         }
+    }
+
+    override fun onAvatarSelected(resourceId: Int) {
+        setProfileImageResource(resourceId)
+    }
+
+    override fun onGallerySelected() {
+        pickImageFromGallery()
     }
 }

@@ -27,32 +27,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/changeAvatarButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp">
-
-        <ImageView
-            android:id="@+id/avatarExample1"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/ic_avatar_1" />
-
-        <ImageView
-            android:id="@+id/avatarExample2"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/ic_avatar_2" />
-
-        <ImageView
-            android:id="@+id/avatarExample3"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/ic_avatar_3" />
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
