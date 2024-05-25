@@ -87,11 +87,14 @@ object QuestionGenerator {
         return questions.take(10)
     }
 
-    fun generateEnglishQuestions(): List<Question> {
-        val questions = mutableListOf<Question>()
+    fun getPlanetByIndex(index: Int) = PlanetData.getPlanetByIndex(index)
 
-        // Preguntas de arrastrar y soltar letras
-        val randomWords = EnglishData.getRandomWords(5)
+    fun getAnimalByIndex(index: Int) = AnimalData.getAnimalByIndex(index)
+
+    fun getWordByIndex(index: Int) = EnglishData.getWordByIndex(index)
+    fun generateEnglishWordFormingQuestions(): List<Question> {
+        val questions = mutableListOf<Question>()
+        val randomWords = EnglishData.getRandomWords(10)
         for (word in randomWords) {
             questions.add(
                 Question(
@@ -101,10 +104,15 @@ object QuestionGenerator {
                 )
             )
         }
+        return questions
+    }
 
-        // Preguntas de elección múltiple sobre palabras
-        val wordImages = EnglishData.words.map { it.imageResId }.distinct()
-        for (image in wordImages) {
+    fun generateEnglishVocabularyQuestions(): List<Question> {
+        val questions = mutableListOf<Question>()
+
+        // Genera preguntas de elección múltiple
+        val wordImages = EnglishData.words.map { it.imageResId }.distinct().shuffled()
+        for (image in wordImages.take(5)) {
             val correctWords = EnglishData.words.filter { it.imageResId == image }
             val incorrectWords = EnglishData.words.filter { it.imageResId != image }
 
@@ -124,17 +132,18 @@ object QuestionGenerator {
             }
         }
 
+        // Genera preguntas de texto
+        val randomWords = EnglishData.getRandomWords(5)
+        for (word in randomWords) {
+            questions.add(
+                Question(
+                    "Escribe la palabra para esta imagen",
+                    EnglishData.words.indexOf(word),
+                    QuestionType.TEXT
+                )
+            )
+        }
+
         return questions.take(10)
     }
-
-    fun getShuffledWord(index: Int): String {
-        val word = EnglishData.getWordByIndex(index).name
-        return EnglishData.shuffleWord(word)
-    }
-
-    fun getPlanetByIndex(index: Int) = PlanetData.getPlanetByIndex(index)
-
-    fun getAnimalByIndex(index: Int) = AnimalData.getAnimalByIndex(index)
-
-    fun getWordByIndex(index: Int) = EnglishData.getWordByIndex(index)
 }

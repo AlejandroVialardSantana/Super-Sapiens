@@ -13,7 +13,8 @@ object EnglishData {
         Word("pear", R.drawable.ic_pear),
         Word("pineapple", R.drawable.ic_pineapple),
         Word("strawberry", R.drawable.ic_strawberry),
-        Word("watermelon", R.drawable.ic_watermelon)
+        Word("watermelon", R.drawable.ic_watermelon),
+        Word("peach", R.drawable.ic_peach),
     )
 
     fun getRandomWords(number: Int, exclude: List<Word> = emptyList()): List<Word> {
@@ -22,9 +23,5 @@ object EnglishData {
 
     fun getWordByIndex(index: Int): Word {
         return words[index]
-    }
-
-    fun shuffleWord(word: String): String {
-        return word.toCharArray().apply { shuffle() }.concatToString()
     }
 }
