@@ -5,5 +5,6 @@ data class Game(
     val title: String,
     val iconResId: Int,
     val type: String,
-    var score: Int = 0
+    var score: Int = 0,
+    var isUnlocked: Boolean = false
 )

@@ -1,11 +1,13 @@
 package com.avs.supersapiens.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.avs.supersapiens.R
@@ -21,6 +23,7 @@ class GameAdapter(
         val gameTitle: TextView = itemView.findViewById(R.id.gameTitle)
         val gameScore: TextView = itemView.findViewById(R.id.gameScore)
         val gameCardContent: LinearLayout = itemView.findViewById(R.id.cardContent)
+        val lockIcon: ImageView = itemView.findViewById(R.id.lockIcon)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
@@ -42,7 +45,15 @@ class GameAdapter(
         }
         holder.gameCardContent.setBackgroundResource(backgroundDrawable)
 
-        holder.itemView.setOnClickListener { clickListener(game) }
+        holder.lockIcon.visibility = if (game.isUnlocked) View.GONE else View.VISIBLE
+
+        holder.itemView.setOnClickListener {
+            if (game.isUnlocked) {
+                clickListener(game)
+            } else {
+                Toast.makeText(it.context, "Este juego está bloqueado, consigue una puntuación de 5 en el anterior primero", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun getItemCount() = games.size

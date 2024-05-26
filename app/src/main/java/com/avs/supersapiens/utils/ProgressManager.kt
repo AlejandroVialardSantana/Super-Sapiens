@@ -26,9 +26,9 @@ class ProgressManager(context: Context) {
 
     fun getCompletedGames(category: String): Int {
         val completedGames = when (category) {
-            "math" -> listOf("1", "2").count { getScore(it) == 10 }
-            "english" -> listOf("3", "4").count { getScore(it) == 10 }
-            "science" -> listOf("5", "6").count { getScore(it) == 10 }
+            "math" -> listOf("1", "2").count { getScore(it) >= 10 }
+            "english" -> listOf("3", "4").count { getScore(it) >= 10 }
+            "science" -> listOf("5", "6").count { getScore(it) >= 10 }
             else -> 0
         }
         Log.d("ProgressManager", "Completed games for category $category: $completedGames")

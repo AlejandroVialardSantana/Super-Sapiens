@@ -64,6 +64,7 @@ class MathGamePlayActivity : AppCompatActivity() {
                 QuestionType.TEXT -> {
                     binding.answerInputLayout.visibility = View.VISIBLE
                     binding.multipleChoiceLayout.visibility = View.GONE
+                    binding.answerInput.text.clear()
                 }
                 QuestionType.MULTIPLE_CHOICE -> {
                     binding.answerInputLayout.visibility = View.GONE
@@ -179,5 +180,4 @@ class MathGamePlayActivity : AppCompatActivity() {
         val feedbackDialog = dialogBuilder.create()
         feedbackDialog.show()
     }
-
 }
