@@ -34,17 +34,13 @@ class GameAdapter(
         holder.gameTitle.text = game.title
         holder.gameScore.text = "${game.score}/10"
 
-        val context = holder.itemView.context
-        val backgroundColor = when (game.type) {
-            "sum" -> ContextCompat.getColor(context, R.color.colorMath)
-            "multiply" -> ContextCompat.getColor(context, R.color.colorMath)
-            "word" -> ContextCompat.getColor(context, R.color.colorEnglish)
-            "vocabulary" -> ContextCompat.getColor(context, R.color.colorEnglish)
-            "animals" -> ContextCompat.getColor(context, R.color.colorScience)
-            "solar" -> ContextCompat.getColor(context, R.color.colorScience)
-            else -> ContextCompat.getColor(context, R.color.white)
+        val backgroundDrawable = when (game.type) {
+            "sum", "multiply" -> R.drawable.gradient_math
+            "word", "vocabulary" -> R.drawable.gradient_english
+            "animals", "solar" -> R.drawable.gradient_science
+            else -> R.color.white
         }
-        holder.gameCardContent.setBackgroundColor(backgroundColor)
+        holder.gameCardContent.setBackgroundResource(backgroundDrawable)
 
         holder.itemView.setOnClickListener { clickListener(game) }
     }

@@ -34,14 +34,13 @@ class GameCategoryAdapter(
         holder.categoryTitle.text = category.title
         holder.categoryProgress.text = "${category.completedGames}/${category.totalGames}"
 
-        val context = holder.itemView.context
-        val backgroundColor = when (category.category) {
-            "math" -> ContextCompat.getColor(context, R.color.colorMath)
-            "english" -> ContextCompat.getColor(context, R.color.colorEnglish)
-            "science" -> ContextCompat.getColor(context, R.color.colorScience)
-            else -> ContextCompat.getColor(context, R.color.white)
+        val backgroundDrawable = when (category.category) {
+            "math" -> R.drawable.gradient_math
+            "english" -> R.drawable.gradient_english
+            "science" -> R.drawable.gradient_science
+            else -> R.color.white
         }
-        holder.cardContent.setBackgroundColor(backgroundColor)
+        holder.cardContent.setBackgroundResource(backgroundDrawable)
 
         holder.itemView.setOnClickListener { clickListener(category) }
     }
