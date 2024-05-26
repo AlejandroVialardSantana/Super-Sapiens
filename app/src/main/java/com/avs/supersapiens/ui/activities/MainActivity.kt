@@ -30,11 +30,13 @@ class MainActivity : AppCompatActivity() {
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back)
 
         val navController = findNavController(R.id.nav_host_fragment)
         val appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
-        supportActionBar?.setDisplayShowTitleEnabled(false) // Deshabilitar el título
+        supportActionBar?.setDisplayShowTitleEnabled(false)
 
         userIcon = findViewById(R.id.userIcon)
         progressBar = findViewById(R.id.progressBar)

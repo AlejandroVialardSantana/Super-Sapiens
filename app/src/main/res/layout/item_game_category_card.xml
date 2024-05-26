@@ -29,7 +29,7 @@
             android:text="Category Title"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="@color/black" />
+            android:textColor="@color/white" />
 
         <TextView
             android:id="@+id/categoryProgress"
@@ -38,6 +38,6 @@
             android:layout_marginTop="4dp"
             android:text="0/0"
             android:textSize="14sp"
-            android:textColor="#757575" />
+            android:textColor="@color/white" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

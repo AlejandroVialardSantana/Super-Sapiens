@@ -84,7 +84,7 @@ class EnglishGamePlayActivity : AppCompatActivity() {
                     binding.answerInputLayout.visibility = View.GONE
                     binding.imageMultipleChoiceLayout.visibility = View.VISIBLE
                     binding.confirmButton.visibility = View.GONE
-                    setupMultipleChoice(question.correctAnswer)
+                    setupMultipleChoice()
                 }
                 QuestionType.TEXT -> {
                     binding.dragAndDropLayout.visibility = View.GONE
@@ -155,7 +155,7 @@ class EnglishGamePlayActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupMultipleChoice(correctAnswerIndex: Int) {
+    private fun setupMultipleChoice() {
         val options = QuestionGenerator.questionOptions[currentQuestionIndex]?.map { QuestionGenerator.getWordByIndex(it) } ?: emptyList()
 
         if (options.isNotEmpty()) {
@@ -266,7 +266,7 @@ class EnglishGamePlayActivity : AppCompatActivity() {
     private fun promptSpeechInput() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.ENGLISH)
             putExtra(RecognizerIntent.EXTRA_PROMPT, "Diga la respuesta")
         }
 

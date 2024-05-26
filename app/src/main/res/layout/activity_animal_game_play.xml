@@ -5,7 +5,7 @@
     android:background="@drawable/background_gradient"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activities.ScienceGamePlayActivity">
+    tools:context=".ui.activities.AnimalGamePlayActivity">
 
     <LinearLayout
         android:id="@+id/questionLayout"

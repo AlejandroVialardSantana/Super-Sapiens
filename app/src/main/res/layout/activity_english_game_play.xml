@@ -107,7 +107,6 @@
             android:elevation="4dp"
             android:padding="16dp"
             android:text="Enviar"
-            android:backgroundTint="@drawable/button_background"
             android:textSize="18sp" />
     </LinearLayout>
 
@@ -138,9 +137,7 @@
                 android:text="Opción 1"
                 style="@style/MyButtonStyle"
                 android:textSize="18sp"
-                android:padding="16dp"
-                android:backgroundTint="@android:color/holo_blue_light"
-                android:textColor="@android:color/white" />
+                android:padding="16dp" />
 
             <Button
                 android:id="@+id/option2"
@@ -151,9 +148,7 @@
                 android:text="Opción 2"
                 style="@style/MyButtonStyle"
                 android:textSize="18sp"
-                android:padding="16dp"
-                android:backgroundTint="@android:color/holo_blue_light"
-                android:textColor="@android:color/white" />
+                android:padding="16dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -171,9 +166,7 @@
                 android:text="Opción 3"
                 style="@style/MyButtonStyle"
                 android:textSize="18sp"
-                android:padding="16dp"
-                android:backgroundTint="@android:color/holo_blue_light"
-                android:textColor="@android:color/white" />
+                android:padding="16dp" />
 
             <Button
                 android:id="@+id/option4"
@@ -184,9 +177,7 @@
                 android:text="Opción 4"
                 style="@style/MyButtonStyle"
                 android:textSize="18sp"
-                android:padding="16dp"
-                android:backgroundTint="@android:color/holo_blue_light"
-                android:textColor="@android:color/white" />
+                android:padding="16dp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -210,8 +201,6 @@
         style="@style/MyButtonStyle"
         android:layout_width="240dp"
         android:layout_height="70dp"
-        android:textColor="@android:color/white"
-        android:backgroundTint="@android:color/holo_purple"
         android:padding="16dp"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/answerInputLayout"

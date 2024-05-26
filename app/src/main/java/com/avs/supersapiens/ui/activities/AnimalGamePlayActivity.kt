@@ -6,15 +6,15 @@ import android.speech.RecognizerIntent
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.avs.supersapiens.databinding.ActivityScienceGamePlayBinding
+import com.avs.supersapiens.databinding.ActivityAnimalGamePlayBinding
 import com.avs.supersapiens.enums.QuestionType
 import com.avs.supersapiens.models.Question
 import com.avs.supersapiens.utils.ProgressManager
 import com.avs.supersapiens.utils.QuestionGenerator
 import java.util.Locale
 
-class ScienceGamePlayActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityScienceGamePlayBinding
+class AnimalGamePlayActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityAnimalGamePlayBinding
     private lateinit var progressManager: ProgressManager
 
     private var currentQuestionIndex = 0
@@ -25,7 +25,7 @@ class ScienceGamePlayActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityScienceGamePlayBinding.inflate(layoutInflater)
+        binding = ActivityAnimalGamePlayBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         progressManager = ProgressManager(this)

@@ -54,6 +54,7 @@ class MathGamePlayActivity : AppCompatActivity() {
             val question = questions[currentQuestionIndex]
             binding.questionNumberText.text = "Pregunta ${currentQuestionIndex + 1} de ${questions.size}"
             binding.questionText.text = question.text
+            binding.voiceButton.visibility = View.VISIBLE
 
             when (question.type) {
                 QuestionType.TEXT -> {
@@ -63,6 +64,7 @@ class MathGamePlayActivity : AppCompatActivity() {
                 QuestionType.MULTIPLE_CHOICE -> {
                     binding.answerInputLayout.visibility = View.GONE
                     binding.multipleChoiceLayout.visibility = View.VISIBLE
+                    binding.voiceButton.visibility = View.GONE
                     val options = MathData.generateMultipleChoiceOptions(question.correctAnswer)
                     binding.option1.text = options[0].toString()
                     binding.option2.text = options[1].toString()
