@@ -9,8 +9,10 @@ import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.view.DragEvent
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.avs.supersapiens.R
@@ -224,24 +226,22 @@ class EnglishGamePlayActivity : AppCompatActivity() {
     private fun checkAnswer() {
         if (currentQuestionIndex < questions.size) {
             val question = questions[currentQuestionIndex]
+            val correctAnswer = QuestionGenerator.getWordByIndex(question.correctAnswer).name
+            var isCorrect = false
 
             if (question.type == QuestionType.DRAG_AND_DROP) {
                 val userAnswer = dropZones.joinToString("") { it.text.toString() }
-
-                if (userAnswer.equals(QuestionGenerator.getWordByIndex(question.correctAnswer).name, ignoreCase = true)) {
-                    correctAnswers++
-                }
+                isCorrect = userAnswer.equals(correctAnswer, ignoreCase = true)
             } else if (question.type == QuestionType.TEXT) {
                 val userAnswer = binding.answerInput.text.toString()
-
-                if (userAnswer.equals(QuestionGenerator.getWordByIndex(question.correctAnswer).name, ignoreCase = true)) {
-                    correctAnswers++
-                }
+                isCorrect = userAnswer.equals(correctAnswer, ignoreCase = true)
                 binding.answerInput.text.clear()
             }
 
+            if (isCorrect) correctAnswers++
+
             currentQuestionIndex++
-            showQuestion()
+            showFeedbackDialog(isCorrect, correctAnswer)
         }
     }
 
@@ -255,12 +255,13 @@ class EnglishGamePlayActivity : AppCompatActivity() {
             else -> -1
         }
 
-        if (selectedOption == QuestionGenerator.getWordByIndex(question.correctAnswer).imageResId) {
-            correctAnswers++
-        }
+        val correctAnswer = QuestionGenerator.getWordByIndex(question.correctAnswer).name
+        val isCorrect = selectedOption == QuestionGenerator.getWordByIndex(question.correctAnswer).imageResId
+
+        if (isCorrect) correctAnswers++
 
         currentQuestionIndex++
-        showQuestion()
+        showFeedbackDialog(isCorrect, correctAnswer)
     }
 
     private fun promptSpeechInput() {
@@ -284,12 +285,12 @@ class EnglishGamePlayActivity : AppCompatActivity() {
             val spokenAnswerText = result?.get(0)
             if (spokenAnswerText != null) {
                 val question = questions[currentQuestionIndex]
-                if (spokenAnswerText.equals(QuestionGenerator.getWordByIndex(question.correctAnswer).name, ignoreCase = true)) {
-                    correctAnswers++
-                }
+                val correctAnswer = QuestionGenerator.getWordByIndex(question.correctAnswer).name
+                val isCorrect = spokenAnswerText.equals(correctAnswer, ignoreCase = true)
+                if (isCorrect) correctAnswers++
 
                 currentQuestionIndex++
-                showQuestion()
+                showFeedbackDialog(isCorrect, correctAnswer)
             } else {
                 Toast.makeText(this, "No se entendió la respuesta. Inténtalo de nuevo.", Toast.LENGTH_SHORT).show()
             }
@@ -305,4 +306,34 @@ class EnglishGamePlayActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+
+    private fun showFeedbackDialog(isCorrect: Boolean, correctAnswer: String) {
+        val dialogBuilder = AlertDialog.Builder(this)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_feedback, null)
+        dialogBuilder.setView(dialogView)
+
+        val feedbackIcon: ImageView = dialogView.findViewById(R.id.feedbackIcon)
+        val feedbackText: TextView = dialogView.findViewById(R.id.feedbackText)
+        val correctAnswerText: TextView = dialogView.findViewById(R.id.correctAnswerText)
+
+        if (isCorrect) {
+            feedbackIcon.setImageResource(R.drawable.ic_correct) // Tick icon
+            feedbackText.text = "¡Muy bien!"
+            correctAnswerText.visibility = View.GONE
+        } else {
+            feedbackIcon.setImageResource(R.drawable.ic_incorrect) // Cross icon
+            feedbackText.text = "¡Casi! La respuesta correcta es:"
+            correctAnswerText.text = correctAnswer
+            correctAnswerText.visibility = View.VISIBLE
+        }
+
+        dialogBuilder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+            showQuestion()
+        }
+
+        val feedbackDialog = dialogBuilder.create()
+        feedbackDialog.show()
+    }
+
 }

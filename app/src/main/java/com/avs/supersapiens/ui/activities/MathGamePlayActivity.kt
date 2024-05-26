@@ -4,8 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.avs.supersapiens.R
 import com.avs.supersapiens.databinding.ActivityMathGamePlayBinding
 import com.avs.supersapiens.enums.QuestionType
 import com.avs.supersapiens.models.Question
@@ -81,14 +85,11 @@ class MathGamePlayActivity : AppCompatActivity() {
     private fun checkAnswer() {
         val question = questions[currentQuestionIndex]
         val userAnswer = binding.answerInput.text.toString().toIntOrNull()
+        val isCorrect = userAnswer == question.correctAnswer
 
-        if (userAnswer == question.correctAnswer) {
-            correctAnswers++
-        }
+        if (isCorrect) correctAnswers++
 
-        currentQuestionIndex++
-        binding.answerInput.text.clear()
-        showQuestion()
+        showFeedbackDialog(isCorrect, question.correctAnswer.toString())
     }
 
     private fun checkMultipleChoiceAnswer(selectedOptionIndex: Int) {
@@ -101,12 +102,10 @@ class MathGamePlayActivity : AppCompatActivity() {
             else -> 0
         }
 
-        if (selectedOption == question.correctAnswer) {
-            correctAnswers++
-        }
+        val isCorrect = selectedOption == question.correctAnswer
+        if (isCorrect) correctAnswers++
 
-        currentQuestionIndex++
-        showQuestion()
+        showFeedbackDialog(isCorrect, question.correctAnswer.toString())
     }
 
     private fun promptSpeechInput() {
@@ -131,12 +130,10 @@ class MathGamePlayActivity : AppCompatActivity() {
             val spokenAnswerNumber = spokenAnswerText?.toIntOrNull()
             if (spokenAnswerNumber != null) {
                 val question = questions[currentQuestionIndex]
-                if (spokenAnswerNumber == question.correctAnswer) {
-                    correctAnswers++
-                }
+                val isCorrect = spokenAnswerNumber == question.correctAnswer
+                if (isCorrect) correctAnswers++
 
-                currentQuestionIndex++
-                showQuestion()
+                showFeedbackDialog(isCorrect, question.correctAnswer.toString())
             } else {
                 Toast.makeText(this, "No se entendió la respuesta. Inténtalo de nuevo.", Toast.LENGTH_SHORT).show()
             }
@@ -152,4 +149,35 @@ class MathGamePlayActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+
+    private fun showFeedbackDialog(isCorrect: Boolean, correctAnswer: String) {
+        val dialogBuilder = AlertDialog.Builder(this)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_feedback, null)
+        dialogBuilder.setView(dialogView)
+
+        val feedbackIcon: ImageView = dialogView.findViewById(R.id.feedbackIcon)
+        val feedbackText: TextView = dialogView.findViewById(R.id.feedbackText)
+        val correctAnswerText: TextView = dialogView.findViewById(R.id.correctAnswerText)
+
+        if (isCorrect) {
+            feedbackIcon.setImageResource(R.drawable.ic_correct)
+            feedbackText.text = "¡Muy bien!"
+            correctAnswerText.visibility = View.GONE
+        } else {
+            feedbackIcon.setImageResource(R.drawable.ic_incorrect)
+            feedbackText.text = "¡Casi! La respuesta correcta es:"
+            correctAnswerText.text = correctAnswer
+            correctAnswerText.visibility = View.VISIBLE
+        }
+
+        dialogBuilder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+            currentQuestionIndex++
+            showQuestion()
+        }
+
+        val feedbackDialog = dialogBuilder.create()
+        feedbackDialog.show()
+    }
+
 }

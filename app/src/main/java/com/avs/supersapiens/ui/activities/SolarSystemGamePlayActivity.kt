@@ -4,8 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.avs.supersapiens.R
 import com.avs.supersapiens.databinding.ActivitySolarSystemGamePlayBinding
 import com.avs.supersapiens.enums.QuestionType
 import com.avs.supersapiens.models.Question
@@ -108,14 +112,12 @@ class SolarSystemGamePlayActivity : AppCompatActivity() {
         if (currentQuestionIndex < questions.size) {
             val question = questions[currentQuestionIndex]
             val userAnswer = binding.answerInput.text.toString()
+            val correctAnswer = QuestionGenerator.getPlanetByIndex(question.correctAnswer).name
+            val isCorrect = userAnswer.equals(correctAnswer, ignoreCase = true)
 
-            if (userAnswer.equals(QuestionGenerator.getPlanetByIndex(question.correctAnswer).name, ignoreCase = true)) {
-                correctAnswers++
-            }
+            if (isCorrect) correctAnswers++
 
-            currentQuestionIndex++
-            binding.answerInput.text.clear()
-            showQuestion()
+            showFeedbackDialog(isCorrect, correctAnswer)
         }
     }
 
@@ -129,13 +131,12 @@ class SolarSystemGamePlayActivity : AppCompatActivity() {
                 3 -> binding.option4.tag as Int
                 else -> -1
             }
+            val correctAnswer = QuestionGenerator.getPlanetByIndex(question.correctAnswer).imageResId
+            val isCorrect = selectedOption == correctAnswer
 
-            if (selectedOption == QuestionGenerator.getPlanetByIndex(question.correctAnswer).imageResId) {
-                correctAnswers++
-            }
+            if (isCorrect) correctAnswers++
 
-            currentQuestionIndex++
-            showQuestion()
+            showFeedbackDialog(isCorrect, QuestionGenerator.getPlanetByIndex(question.correctAnswer).name)
         }
     }
 
@@ -160,12 +161,12 @@ class SolarSystemGamePlayActivity : AppCompatActivity() {
             val spokenAnswerText = result?.get(0)
             if (spokenAnswerText != null) {
                 val question = questions[currentQuestionIndex]
-                if (spokenAnswerText.equals(QuestionGenerator.getPlanetByIndex(question.correctAnswer).name, ignoreCase = true)) {
-                    correctAnswers++
-                }
+                val correctAnswer = QuestionGenerator.getPlanetByIndex(question.correctAnswer).name
+                val isCorrect = spokenAnswerText.equals(correctAnswer, ignoreCase = true)
 
-                currentQuestionIndex++
-                showQuestion()
+                if (isCorrect) correctAnswers++
+
+                showFeedbackDialog(isCorrect, correctAnswer)
             } else {
                 Toast.makeText(this, "No se entendió la respuesta. Inténtalo de nuevo.", Toast.LENGTH_SHORT).show()
             }
@@ -180,5 +181,35 @@ class SolarSystemGamePlayActivity : AppCompatActivity() {
         }
         startActivity(intent)
         finish()
+    }
+
+    private fun showFeedbackDialog(isCorrect: Boolean, correctAnswer: String) {
+        val dialogBuilder = AlertDialog.Builder(this)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_feedback, null)
+        dialogBuilder.setView(dialogView)
+
+        val feedbackIcon: ImageView = dialogView.findViewById(R.id.feedbackIcon)
+        val feedbackText: TextView = dialogView.findViewById(R.id.feedbackText)
+        val correctAnswerText: TextView = dialogView.findViewById(R.id.correctAnswerText)
+
+        if (isCorrect) {
+            feedbackIcon.setImageResource(R.drawable.ic_correct)
+            feedbackText.text = "¡Muy bien!"
+            correctAnswerText.visibility = View.GONE
+        } else {
+            feedbackIcon.setImageResource(R.drawable.ic_incorrect)
+            feedbackText.text = "¡Casi! La respuesta correcta es:"
+            correctAnswerText.text = correctAnswer
+            correctAnswerText.visibility = View.VISIBLE
+        }
+
+        dialogBuilder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+            currentQuestionIndex++
+            showQuestion()
+        }
+
+        val feedbackDialog = dialogBuilder.create()
+        feedbackDialog.show()
     }
 }
