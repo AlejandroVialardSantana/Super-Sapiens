@@ -8,8 +8,10 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.view.DragEvent
+import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -19,7 +21,6 @@ import com.avs.supersapiens.R
 import com.avs.supersapiens.databinding.ActivityEnglishGamePlayBinding
 import com.avs.supersapiens.enums.QuestionType
 import com.avs.supersapiens.models.Question
-import com.avs.supersapiens.utils.EnglishData
 import com.avs.supersapiens.utils.ProgressManager
 import com.avs.supersapiens.utils.QuestionGenerator
 import java.util.Locale
@@ -113,13 +114,18 @@ class EnglishGamePlayActivity : AppCompatActivity() {
         binding.dropZoneContainer.removeAllViews()
         letterViews.clear()
 
+        val letterParams = LinearLayout.LayoutParams(80, 85).apply {
+            setMargins(8, 8, 8, 8)
+        }
+
         shuffledWord.forEachIndexed { index, char ->
             val letterView = TextView(this).apply {
-                text = char.toString()
-                textSize = 24f
-                setPadding(16, 16, 16, 16)
-                setBackgroundColor(ContextCompat.getColor(context, android.R.color.holo_green_dark))
-                setTextColor(Color.WHITE)
+                text = char.toString().uppercase(Locale.getDefault())
+                textSize = 20f
+                gravity = Gravity.CENTER
+                setPadding(8, 8, 8, 8)
+                setBackgroundResource(R.drawable.letter_background)
+                setTextColor(Color.BLACK)
                 typeface = Typeface.DEFAULT_BOLD
                 tag = "letter_$index"
                 setOnClickListener {
@@ -137,22 +143,23 @@ class EnglishGamePlayActivity : AppCompatActivity() {
                     true
                 }
             }
-            binding.letterContainer.addView(letterView)
+            binding.letterContainer.addView(letterView, letterParams)
             letterViews.add(letterView)
         }
 
         dropZones = word.mapIndexed { index, _ ->
             TextView(this).apply {
-                textSize = 24f
-                setPadding(16, 16, 16, 16)
-                setBackgroundColor(ContextCompat.getColor(context, android.R.color.holo_blue_light))
+                textSize = 20f
+                gravity = Gravity.CENTER
+                setPadding(8, 8, 8, 8)
+                setBackgroundResource(R.drawable.dropzone_background)
                 tag = "drop_$index"
                 setOnDragListener(dragListener)
                 setOnClickListener {
                     removeLetterFromDropZone(this)
                 }
             }.also {
-                binding.dropZoneContainer.addView(it)
+                binding.dropZoneContainer.addView(it, letterParams)
             }
         }
     }
