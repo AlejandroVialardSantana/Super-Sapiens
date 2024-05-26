@@ -122,10 +122,42 @@
             android:scaleType="centerCrop" />
     </GridLayout>
 
+    <EditText
+        android:id="@+id/answerInput"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:hint="Escribe tu respuesta"
+        android:inputType="text"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/answerInputLayout"
+        app:layout_constraintVertical_bias="0.264" />
+
+    <Button
+        android:id="@+id/submitButton"
+        style="@style/MyButtonStyle"
+        android:layout_width="240dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="-10dp"
+        android:elevation="4dp"
+        android:padding="16dp"
+        android:text="Enviar"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/answerInput"
+        app:layout_constraintVertical_bias="0.181" />
+
     <Button
         android:id="@+id/voiceButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/MyButtonStyle"
+        android:layout_width="240dp"
+        android:layout_height="70dp"
         android:layout_marginTop="10dp"
         android:elevation="4dp"
         android:padding="16dp"
@@ -137,36 +169,6 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/submitButton"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/submitButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="-10dp"
-        android:elevation="4dp"
-        android:padding="16dp"
-        android:text="Enviar"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/answerInput"
-        app:layout_constraintVertical_bias="0.206" />
-
-    <EditText
-        android:id="@+id/answerInput"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="Escribe tu respuesta"
-        android:inputType="text"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/answerInputLayout"
-        app:layout_constraintVertical_bias="0.329" />
+        app:layout_constraintVertical_bias="0.051" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

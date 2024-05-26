@@ -112,11 +112,12 @@
 
     <Button
         android:id="@+id/submitButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:elevation="4dp"
         android:padding="16dp"
         android:text="Enviar"
+        style="@style/MyButtonStyle"
+        android:layout_width="240dp"
+        android:layout_height="70dp"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -127,10 +128,11 @@
 
     <Button
         android:id="@+id/voiceButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:elevation="4dp"
         android:padding="16dp"
+        style="@style/MyButtonStyle"
+        android:layout_width="240dp"
+        android:layout_height="70dp"
         android:text="Responder con Voz"
         android:textSize="18sp"
         android:visibility="visible"
@@ -143,9 +145,9 @@
 
     <EditText
         android:id="@+id/answerInput"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="Escribe tu respuesta"
+        android:layout_width="240dp"
         android:inputType="text"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
