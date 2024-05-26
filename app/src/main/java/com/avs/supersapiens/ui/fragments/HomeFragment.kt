@@ -1,6 +1,7 @@
 package com.avs.supersapiens.ui.fragments
 
 import android.content.Context
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.avs.supersapiens.R
 import com.avs.supersapiens.adapters.GameCategoryAdapter
 import com.avs.supersapiens.databinding.FragmentHomeBinding
 import com.avs.supersapiens.models.GameCategory
@@ -22,6 +24,7 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private val viewModel: HomeViewModel by viewModels()
     private lateinit var progressBar: ProgressBar
+    private lateinit var mediaPlayer: MediaPlayer
     private val sharedPrefsFile = "supersapiens_prefs"
     private val achievementShownKey = "achievement_shown"
 
@@ -69,6 +72,8 @@ class HomeFragment : Fragment() {
         animationView.visibility = View.VISIBLE
         animationView.playAnimation()
 
+        playSound(R.raw.achievement_unlocked)
+
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
             animationView.visibility = View.GONE
@@ -86,5 +91,13 @@ class HomeFragment : Fragment() {
             putBoolean(achievementShownKey, shown)
             apply()
         }
+    }
+
+    private fun playSound(resourceId: Int) {
+        mediaPlayer = MediaPlayer.create(context, resourceId)
+        mediaPlayer.setOnCompletionListener { mp ->
+            mp.release()
+        }
+        mediaPlayer.start()
     }
 }

@@ -1,6 +1,7 @@
 package com.avs.supersapiens.ui.activities
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.view.View
@@ -23,6 +24,7 @@ class MathGamePlayActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMathGamePlayBinding
     private lateinit var progressManager: ProgressManager
+    private lateinit var mediaPlayer: MediaPlayer
 
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
@@ -88,7 +90,13 @@ class MathGamePlayActivity : AppCompatActivity() {
         val userAnswer = binding.answerInput.text.toString().toIntOrNull()
         val isCorrect = userAnswer == question.correctAnswer
 
-        if (isCorrect) correctAnswers++
+        if (isCorrect) {
+            correctAnswers++
+            playSound(R.raw.correct_answer)
+        }
+        else {
+            playSound(R.raw.incorrect_answer)
+        }
 
         showFeedbackDialog(isCorrect, question.correctAnswer.toString())
     }
@@ -104,7 +112,13 @@ class MathGamePlayActivity : AppCompatActivity() {
         }
 
         val isCorrect = selectedOption == question.correctAnswer
-        if (isCorrect) correctAnswers++
+        if (isCorrect) {
+            correctAnswers++
+            playSound(R.raw.correct_answer)
+        }
+        else {
+            playSound(R.raw.incorrect_answer)
+        }
 
         showFeedbackDialog(isCorrect, question.correctAnswer.toString())
     }
@@ -132,7 +146,13 @@ class MathGamePlayActivity : AppCompatActivity() {
             if (spokenAnswerNumber != null) {
                 val question = questions[currentQuestionIndex]
                 val isCorrect = spokenAnswerNumber == question.correctAnswer
-                if (isCorrect) correctAnswers++
+                if (isCorrect) {
+                    correctAnswers++
+                    playSound(R.raw.correct_answer)
+                }
+                else {
+                    playSound(R.raw.incorrect_answer)
+                }
 
                 showFeedbackDialog(isCorrect, question.correctAnswer.toString())
             } else {
@@ -179,5 +199,13 @@ class MathGamePlayActivity : AppCompatActivity() {
 
         val feedbackDialog = dialogBuilder.create()
         feedbackDialog.show()
+    }
+
+    private fun playSound(resourceId: Int) {
+        mediaPlayer = MediaPlayer.create(this, resourceId)
+        mediaPlayer.setOnCompletionListener { mp ->
+            mp.release()
+        }
+        mediaPlayer.start()
     }
 }

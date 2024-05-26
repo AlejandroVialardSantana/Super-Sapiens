@@ -1,6 +1,7 @@
 package com.avs.supersapiens.ui.activities
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.view.View
@@ -20,6 +21,7 @@ import java.util.Locale
 class SolarSystemGamePlayActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySolarSystemGamePlayBinding
     private lateinit var progressManager: ProgressManager
+    private lateinit var mediaPlayer: MediaPlayer
 
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
@@ -115,7 +117,13 @@ class SolarSystemGamePlayActivity : AppCompatActivity() {
             val correctAnswer = QuestionGenerator.getPlanetByIndex(question.correctAnswer).name
             val isCorrect = userAnswer.equals(correctAnswer, ignoreCase = true)
 
-            if (isCorrect) correctAnswers++
+            if (isCorrect) {
+                correctAnswers++
+                playSound(R.raw.correct_answer)
+            }
+            else {
+                playSound(R.raw.incorrect_answer)
+            }
 
             showFeedbackDialog(isCorrect, correctAnswer)
         }
@@ -134,7 +142,13 @@ class SolarSystemGamePlayActivity : AppCompatActivity() {
             val correctAnswer = QuestionGenerator.getPlanetByIndex(question.correctAnswer).imageResId
             val isCorrect = selectedOption == correctAnswer
 
-            if (isCorrect) correctAnswers++
+            if (isCorrect) {
+                correctAnswers++
+                playSound(R.raw.correct_answer)
+            }
+            else {
+                playSound(R.raw.incorrect_answer)
+            }
 
             showFeedbackDialog(isCorrect, QuestionGenerator.getPlanetByIndex(question.correctAnswer).name)
         }
@@ -164,7 +178,13 @@ class SolarSystemGamePlayActivity : AppCompatActivity() {
                 val correctAnswer = QuestionGenerator.getPlanetByIndex(question.correctAnswer).name
                 val isCorrect = spokenAnswerText.equals(correctAnswer, ignoreCase = true)
 
-                if (isCorrect) correctAnswers++
+                if (isCorrect) {
+                    correctAnswers++
+                    playSound(R.raw.correct_answer)
+                }
+                else {
+                    playSound(R.raw.incorrect_answer)
+                }
 
                 showFeedbackDialog(isCorrect, correctAnswer)
             } else {
@@ -211,5 +231,13 @@ class SolarSystemGamePlayActivity : AppCompatActivity() {
 
         val feedbackDialog = dialogBuilder.create()
         feedbackDialog.show()
+    }
+
+    private fun playSound(resourceId: Int) {
+        mediaPlayer = MediaPlayer.create(this, resourceId)
+        mediaPlayer.setOnCompletionListener { mp ->
+            mp.release()
+        }
+        mediaPlayer.start()
     }
 }

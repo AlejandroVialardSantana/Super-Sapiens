@@ -2,8 +2,10 @@ package com.avs.supersapiens.ui.activities
 
 import android.content.Intent
 import android.graphics.Color
+import android.media.MediaPlayer
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.avs.supersapiens.R
 import com.avs.supersapiens.databinding.ActivityGameResultBinding
 import nl.dionsegijn.konfetti.models.Shape
 import nl.dionsegijn.konfetti.models.Size
@@ -11,6 +13,7 @@ import nl.dionsegijn.konfetti.models.Size
 class GameResultActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityGameResultBinding
+    private lateinit var mediaPlayer: MediaPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +42,7 @@ class GameResultActivity : AppCompatActivity() {
 
         if (correctAnswers == 10) {
             showConfetti()
+            playSound(R.raw.konfetti)
         }
     }
 
@@ -71,5 +75,13 @@ class GameResultActivity : AppCompatActivity() {
             .addSizes(Size(12, 5f))
             .setPosition(-50f, konfettiView.width + 50f, -50f, -50f)
             .streamFor(300, 5000L)
+    }
+
+    private fun playSound(resourceId: Int) {
+        mediaPlayer = MediaPlayer.create(this, resourceId)
+        mediaPlayer.setOnCompletionListener { mp ->
+            mp.release()
+        }
+        mediaPlayer.start()
     }
 }

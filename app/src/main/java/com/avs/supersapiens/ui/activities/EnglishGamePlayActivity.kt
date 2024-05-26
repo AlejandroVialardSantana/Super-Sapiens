@@ -5,6 +5,7 @@ import android.content.ClipDescription
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.view.DragEvent
@@ -28,6 +29,7 @@ import java.util.Locale
 class EnglishGamePlayActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEnglishGamePlayBinding
     private lateinit var progressManager: ProgressManager
+    private lateinit var mediaPlayer: MediaPlayer
 
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
@@ -245,7 +247,13 @@ class EnglishGamePlayActivity : AppCompatActivity() {
                 binding.answerInput.text.clear()
             }
 
-            if (isCorrect) correctAnswers++
+            if (isCorrect) {
+                correctAnswers++
+                playSound(R.raw.correct_answer)
+            }
+            else {
+                playSound(R.raw.incorrect_answer)
+            }
 
             currentQuestionIndex++
             showFeedbackDialog(isCorrect, correctAnswer)
@@ -265,7 +273,13 @@ class EnglishGamePlayActivity : AppCompatActivity() {
         val correctAnswer = QuestionGenerator.getWordByIndex(question.correctAnswer).name
         val isCorrect = selectedOption == QuestionGenerator.getWordByIndex(question.correctAnswer).imageResId
 
-        if (isCorrect) correctAnswers++
+        if (isCorrect) {
+            correctAnswers++
+            playSound(R.raw.correct_answer)
+        }
+        else {
+            playSound(R.raw.incorrect_answer)
+        }
 
         currentQuestionIndex++
         showFeedbackDialog(isCorrect, correctAnswer)
@@ -294,7 +308,13 @@ class EnglishGamePlayActivity : AppCompatActivity() {
                 val question = questions[currentQuestionIndex]
                 val correctAnswer = QuestionGenerator.getWordByIndex(question.correctAnswer).name
                 val isCorrect = spokenAnswerText.equals(correctAnswer, ignoreCase = true)
-                if (isCorrect) correctAnswers++
+                if (isCorrect) {
+                    correctAnswers++
+                    playSound(R.raw.correct_answer)
+                }
+                else {
+                    playSound(R.raw.incorrect_answer)
+                }
 
                 currentQuestionIndex++
                 showFeedbackDialog(isCorrect, correctAnswer)
@@ -343,4 +363,11 @@ class EnglishGamePlayActivity : AppCompatActivity() {
         feedbackDialog.show()
     }
 
+    private fun playSound(resourceId: Int) {
+        mediaPlayer = MediaPlayer.create(this, resourceId)
+        mediaPlayer.setOnCompletionListener { mp ->
+            mp.release()
+        }
+        mediaPlayer.start()
+    }
 }

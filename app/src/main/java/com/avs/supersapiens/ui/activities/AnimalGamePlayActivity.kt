@@ -1,6 +1,7 @@
 package com.avs.supersapiens.ui.activities
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.view.View
@@ -20,6 +21,7 @@ import java.util.Locale
 class AnimalGamePlayActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAnimalGamePlayBinding
     private lateinit var progressManager: ProgressManager
+    private lateinit var mediaPlayer: MediaPlayer
 
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
@@ -99,7 +101,13 @@ class AnimalGamePlayActivity : AppCompatActivity() {
         val correctAnswer = QuestionGenerator.getAnimalByIndex(question.correctAnswer).name
         val isCorrect = userAnswer.equals(correctAnswer, ignoreCase = true)
 
-        if (isCorrect) correctAnswers++
+        if (isCorrect) {
+            correctAnswers++
+            playSound(R.raw.correct_answer)
+        }
+        else {
+            playSound(R.raw.incorrect_answer)
+        }
 
         showFeedbackDialog(isCorrect, correctAnswer)
     }
@@ -116,7 +124,13 @@ class AnimalGamePlayActivity : AppCompatActivity() {
         val correctAnswer = QuestionGenerator.getAnimalByIndex(question.correctAnswer).imageResId
         val isCorrect = selectedOption == correctAnswer
 
-        if (isCorrect) correctAnswers++
+        if (isCorrect) {
+            correctAnswers++
+            playSound(R.raw.correct_answer)
+        }
+        else {
+            playSound(R.raw.incorrect_answer)
+        }
 
         showFeedbackDialog(isCorrect, QuestionGenerator.getAnimalByIndex(question.correctAnswer).name)
     }
@@ -145,7 +159,13 @@ class AnimalGamePlayActivity : AppCompatActivity() {
                 val correctAnswer = QuestionGenerator.getAnimalByIndex(question.correctAnswer).name
                 val isCorrect = spokenAnswerText.equals(correctAnswer, ignoreCase = true)
 
-                if (isCorrect) correctAnswers++
+                if (isCorrect) {
+                    correctAnswers++
+                    playSound(R.raw.correct_answer)
+                }
+                else {
+                    playSound(R.raw.incorrect_answer)
+                }
 
                 showFeedbackDialog(isCorrect, correctAnswer)
             } else {
@@ -194,4 +214,11 @@ class AnimalGamePlayActivity : AppCompatActivity() {
         feedbackDialog.show()
     }
 
+    private fun playSound(resourceId: Int) {
+        mediaPlayer = MediaPlayer.create(this, resourceId)
+        mediaPlayer.setOnCompletionListener { mp ->
+            mp.release()
+        }
+        mediaPlayer.start()
+    }
 }
