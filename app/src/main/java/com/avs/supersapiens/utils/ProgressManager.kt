@@ -7,6 +7,9 @@ import android.util.Log
 class ProgressManager(context: Context) {
 
     private val sharedPreferences: SharedPreferences = context.getSharedPreferences("game_scores", Context.MODE_PRIVATE)
+    private val achievementPrefsFile = "supersapiens_prefs"
+    private val achievementShownKey = "achievement_shown"
+    private val achievementSharedPreferences: SharedPreferences = context.getSharedPreferences(achievementPrefsFile, Context.MODE_PRIVATE)
 
     fun saveScore(gameId: String, score: Int) {
         val editor = sharedPreferences.edit()
@@ -38,5 +41,13 @@ class ProgressManager(context: Context) {
     fun clearAllScores() {
         sharedPreferences.edit().clear().apply()
         Log.d("ProgressManager", "All scores cleared")
+        clearAchievementProgress()
+    }
+
+    private fun clearAchievementProgress() {
+        val editor = achievementSharedPreferences.edit()
+        editor.putBoolean(achievementShownKey, false)
+        editor.apply()
+        Log.d("ProgressManager", "Achievement progress cleared")
     }
 }

@@ -17,7 +17,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.avs.supersapiens.R
 import com.avs.supersapiens.databinding.ActivityEnglishGamePlayBinding
 import com.avs.supersapiens.enums.QuestionType
@@ -26,6 +25,9 @@ import com.avs.supersapiens.utils.ProgressManager
 import com.avs.supersapiens.utils.QuestionGenerator
 import java.util.Locale
 
+/**
+ * Actividad para jugar juegos de inglés.
+ */
 class EnglishGamePlayActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEnglishGamePlayBinding
     private lateinit var progressManager: ProgressManager
@@ -49,6 +51,7 @@ class EnglishGamePlayActivity : AppCompatActivity() {
         gameId = intent.getStringExtra("gameId") ?: return
         correctAnswers = 0
 
+        // Obtener preguntas del generador de preguntas según el tipo de juego
         val gameType = intent.getStringExtra("gameType") ?: "word"
         questions = if (gameType == "word") {
             QuestionGenerator.generateEnglishWordFormingQuestions()
@@ -67,6 +70,9 @@ class EnglishGamePlayActivity : AppCompatActivity() {
         showQuestion()
     }
 
+    /**
+     * Muestra la pregunta actual en la interfaz de usuario.
+     */
     private fun showQuestion() {
         if (currentQuestionIndex < questions.size) {
             val question = questions[currentQuestionIndex]
@@ -77,6 +83,7 @@ class EnglishGamePlayActivity : AppCompatActivity() {
             binding.questionImage.setImageResource(imageResId)
 
             when (question.type) {
+                // Mostrar la interfaz de usuario según el tipo de pregunta
                 QuestionType.DRAG_AND_DROP -> {
                     binding.dragAndDropLayout.visibility = View.VISIBLE
                     binding.answerInputLayout.visibility = View.GONE
@@ -100,7 +107,7 @@ class EnglishGamePlayActivity : AppCompatActivity() {
                     binding.answerInput.text.clear()
                 }
                 else -> {
-                    // Handle other types if any
+                    // No se implementa
                 }
             }
         } else {
@@ -108,8 +115,12 @@ class EnglishGamePlayActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Configura la interfaz de usuario para el juego de formación de palabras.
+     */
     private fun setupDragAndDrop(correctAnswerIndex: Int) {
         val word = QuestionGenerator.getWordByIndex(correctAnswerIndex).name
+        // Mezclar las letras de la palabra
         val shuffledWord = word.toCharArray().apply { shuffle() }.concatToString()
 
         binding.letterContainer.removeAllViews()
@@ -120,6 +131,7 @@ class EnglishGamePlayActivity : AppCompatActivity() {
             setMargins(8, 8, 8, 8)
         }
 
+        // Crear vistas de letras y zonas de caída mediante cuadros
         shuffledWord.forEachIndexed { index, char ->
             val letterView = TextView(this).apply {
                 text = char.toString().uppercase(Locale.getDefault())
@@ -166,6 +178,9 @@ class EnglishGamePlayActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Configura la interfaz de usuario para el juego de opción múltiple.
+     */
     private fun setupMultipleChoice() {
         val options = QuestionGenerator.questionOptions[currentQuestionIndex]?.map { QuestionGenerator.getWordByIndex(it) } ?: emptyList()
 
@@ -182,6 +197,9 @@ class EnglishGamePlayActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Agrega una letra a la zona de caída.
+     */
     private fun addLetterToDropZone(letterView: TextView) {
         for (dropZone in dropZones) {
             if (dropZone.text.isEmpty()) {
@@ -193,6 +211,9 @@ class EnglishGamePlayActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Elimina una letra de la zona de caída.
+     */
     private fun removeLetterFromDropZone(dropZone: TextView) {
         if (dropZone.text.isNotEmpty()) {
             val tag = dropZone.tag as String
@@ -203,6 +224,9 @@ class EnglishGamePlayActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Listener para el evento de arrastrar y soltar/clickar
+     */
     private val dragListener = View.OnDragListener { view, dragEvent ->
         when (dragEvent.action) {
             DragEvent.ACTION_DRAG_STARTED -> true
@@ -232,6 +256,9 @@ class EnglishGamePlayActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Comprueba la respuesta del usuario y muestra el diálogo de retroalimentación.
+     */
     private fun checkAnswer() {
         if (currentQuestionIndex < questions.size) {
             val question = questions[currentQuestionIndex]
@@ -260,6 +287,9 @@ class EnglishGamePlayActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Comprueba la respuesta del usuario en preguntas de opción múltiple y muestra el diálogo de retroalimentación.
+     */
     private fun checkMultipleChoiceAnswer(selectedOptionIndex: Int) {
         val question = questions[currentQuestionIndex]
         val selectedOption = when (selectedOptionIndex) {
@@ -285,6 +315,9 @@ class EnglishGamePlayActivity : AppCompatActivity() {
         showFeedbackDialog(isCorrect, correctAnswer)
     }
 
+    /**
+     * Muestra el diálogo de entrada de voz para responder a la pregunta.
+     */
     private fun promptSpeechInput() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
@@ -299,6 +332,9 @@ class EnglishGamePlayActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Procesa la respuesta de voz del usuario, la compara con la respuesta correcta y muestra el diálogo de retroalimentación.
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_SPEECH_INPUT && resultCode == RESULT_OK && data != null) {
@@ -324,6 +360,9 @@ class EnglishGamePlayActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Muestra la pantalla de resultados y guarda la puntuación del usuario.
+     */
     private fun showResults() {
         progressManager.saveScore(gameId, correctAnswers)
         val intent = Intent(this, GameResultActivity::class.java).apply {
@@ -334,6 +373,9 @@ class EnglishGamePlayActivity : AppCompatActivity() {
         finish()
     }
 
+    /**
+     * Muestra un diálogo de retroalimentación al usuario.
+     */
     private fun showFeedbackDialog(isCorrect: Boolean, correctAnswer: String) {
         val dialogBuilder = AlertDialog.Builder(this)
         val dialogView = layoutInflater.inflate(R.layout.dialog_feedback, null)
@@ -363,6 +405,9 @@ class EnglishGamePlayActivity : AppCompatActivity() {
         feedbackDialog.show()
     }
 
+    /**
+     * Reproduce un sonido de respuesta correcta o incorrecta.
+     */
     private fun playSound(resourceId: Int) {
         mediaPlayer = MediaPlayer.create(this, resourceId)
         mediaPlayer.setOnCompletionListener { mp ->

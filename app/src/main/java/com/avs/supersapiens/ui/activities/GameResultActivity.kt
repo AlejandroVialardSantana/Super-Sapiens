@@ -10,6 +10,9 @@ import com.avs.supersapiens.databinding.ActivityGameResultBinding
 import nl.dionsegijn.konfetti.models.Shape
 import nl.dionsegijn.konfetti.models.Size
 
+/**
+ * Actividad que muestra los resultados del juego.
+ */
 class GameResultActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityGameResultBinding
@@ -40,12 +43,19 @@ class GameResultActivity : AppCompatActivity() {
             shareResults(correctAnswers, totalQuestions)
         }
 
+        // Si el usuario ha respondido correctamente a todas las preguntas, se muestra la animación de confeti.
         if (correctAnswers == 10) {
             showConfetti()
             playSound(R.raw.konfetti)
         }
     }
 
+    /**
+     * Comparte los resultados del juego a través de una aplicación de mensajería.
+     *
+     * @param correctAnswers Número de respuestas correctas.
+     * @param totalQuestions Número total de preguntas.
+     */
     private fun shareResults(correctAnswers: Int, totalQuestions: Int) {
         val shareIntent = Intent().apply {
             action = Intent.ACTION_SEND
@@ -62,6 +72,9 @@ class GameResultActivity : AppCompatActivity() {
         startActivity(Intent.createChooser(shareIntent, "Compartir resultados a través de"))
     }
 
+    /**
+     * Muestra la animación de confeti.
+     */
     private fun showConfetti() {
         val konfettiView = binding.konfettiView
 
@@ -77,6 +90,11 @@ class GameResultActivity : AppCompatActivity() {
             .streamFor(300, 5000L)
     }
 
+    /**
+     * Reproduce un sonido.
+     *
+     * @param resourceId ID del recurso de sonido.
+     */
     private fun playSound(resourceId: Int) {
         mediaPlayer = MediaPlayer.create(this, resourceId)
         mediaPlayer.setOnCompletionListener { mp ->

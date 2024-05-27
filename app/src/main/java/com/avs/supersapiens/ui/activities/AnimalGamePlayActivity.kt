@@ -18,6 +18,9 @@ import com.avs.supersapiens.utils.ProgressManager
 import com.avs.supersapiens.utils.QuestionGenerator
 import java.util.Locale
 
+/**
+ * Actividad para jugar el juego de animales.
+ */
 class AnimalGamePlayActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAnimalGamePlayBinding
     private lateinit var progressManager: ProgressManager
@@ -58,6 +61,7 @@ class AnimalGamePlayActivity : AppCompatActivity() {
             binding.questionText.text = question.text
 
             when (question.type) {
+                // Manejo de tipo de pregunta de texto
                 QuestionType.IMAGE_IDENTIFICATION -> {
                     binding.answerInputLayout.visibility = View.VISIBLE
                     binding.multipleChoiceLayout.visibility = View.GONE
@@ -66,7 +70,9 @@ class AnimalGamePlayActivity : AppCompatActivity() {
                     binding.submitButton.visibility = View.VISIBLE
                     val animal = QuestionGenerator.getAnimalByIndex(question.correctAnswer)
                     binding.questionImage.setImageResource(animal.imageResId)
+                    binding.answerInput.text.clear()
                 }
+                // Manejo de tipo de pregunta de opción múltiple con imágenes
                 QuestionType.IMAGE_MULTIPLE_CHOICE -> {
                     binding.answerInputLayout.visibility = View.GONE
                     binding.multipleChoiceLayout.visibility = View.VISIBLE
@@ -95,6 +101,9 @@ class AnimalGamePlayActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Verifica la respuesta del usuario y muestra un diálogo de retroalimentación.
+     */
     private fun checkAnswer() {
         val question = questions[currentQuestionIndex]
         val userAnswer = binding.answerInput.text.toString()
@@ -112,6 +121,9 @@ class AnimalGamePlayActivity : AppCompatActivity() {
         showFeedbackDialog(isCorrect, correctAnswer)
     }
 
+    /**
+     * Verifica la respuesta del usuario en una pregunta de opción múltiple.
+     */
     private fun checkMultipleChoiceAnswer(selectedOptionIndex: Int) {
         val question = questions[currentQuestionIndex]
         val selectedOption = when (selectedOptionIndex) {
@@ -135,6 +147,9 @@ class AnimalGamePlayActivity : AppCompatActivity() {
         showFeedbackDialog(isCorrect, QuestionGenerator.getAnimalByIndex(question.correctAnswer).name)
     }
 
+    /**
+     * Muestra un diálogo de voz para que el usuario diga la respuesta.
+     */
     private fun promptSpeechInput() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
@@ -152,6 +167,7 @@ class AnimalGamePlayActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_SPEECH_INPUT && resultCode == RESULT_OK && data != null) {
+            // Obtiene la lista de resultados de la entrada de voz
             val result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
             val spokenAnswerText = result?.get(0)
             if (spokenAnswerText != null) {
@@ -174,6 +190,9 @@ class AnimalGamePlayActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Muestra la pantalla de resultados y guarda la puntuación.
+     */
     private fun showResults() {
         progressManager.saveScore(gameId, correctAnswers)
         val intent = Intent(this, GameResultActivity::class.java).apply {
@@ -184,6 +203,9 @@ class AnimalGamePlayActivity : AppCompatActivity() {
         finish()
     }
 
+    /**
+     * Muestra un diálogo de retroalimentación al usuario en base a si la respuesta fue correcta o no.
+     */
     private fun showFeedbackDialog(isCorrect: Boolean, correctAnswer: String) {
         val dialogBuilder = AlertDialog.Builder(this)
         val dialogView = layoutInflater.inflate(R.layout.dialog_feedback, null)
@@ -214,6 +236,9 @@ class AnimalGamePlayActivity : AppCompatActivity() {
         feedbackDialog.show()
     }
 
+    /**
+     * Reproduce un sonido de respuesta correcta o incorrecta.
+     */
     private fun playSound(resourceId: Int) {
         mediaPlayer = MediaPlayer.create(this, resourceId)
         mediaPlayer.setOnCompletionListener { mp ->

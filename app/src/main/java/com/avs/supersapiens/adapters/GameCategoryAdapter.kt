@@ -11,6 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.avs.supersapiens.R
 import com.avs.supersapiens.models.GameCategory
 
+/**
+ * Adaptador para la lista de categorías de juegos.
+ *
+    * @param categories Lista de categorías de juegos.
+ * @param clickListener Función que se ejecuta al hacer click en una categoría.
+ */
 class GameCategoryAdapter(
     private var categories: List<GameCategory>,
     private val clickListener: (GameCategory) -> Unit
@@ -34,6 +40,7 @@ class GameCategoryAdapter(
         holder.categoryTitle.text = category.title
         holder.categoryProgress.text = "${category.completedGames}/${category.totalGames}"
 
+        //
         val backgroundDrawable = when (category.category) {
             "math" -> R.drawable.gradient_math
             "english" -> R.drawable.gradient_english

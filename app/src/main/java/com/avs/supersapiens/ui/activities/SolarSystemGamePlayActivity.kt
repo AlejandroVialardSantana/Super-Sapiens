@@ -71,6 +71,7 @@ class SolarSystemGamePlayActivity : AppCompatActivity() {
                     binding.questionImage.visibility = View.VISIBLE
                     val planet = QuestionGenerator.getPlanetByIndex(question.correctAnswer)
                     binding.questionImage.setImageResource(planet.imageResId)
+                    binding.answerInput.text.clear()
                 }
                 QuestionType.IMAGE_MULTIPLE_CHOICE -> {
                     binding.answerInputLayout.visibility = View.GONE

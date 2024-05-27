@@ -52,6 +52,9 @@ class MainActivity : AppCompatActivity() {
         loadProfileImage(userIcon)
     }
 
+    /**
+     * Carga la imagen de perfil del usuario, mostrando un ProgressBar mientras se carga.
+     */
     private fun loadProfileImage(userIcon: ImageView) {
         val sharedPreferences = getSharedPreferences("user_profile", Context.MODE_PRIVATE)
         val imageString = sharedPreferences.getString("profile_image", null)
@@ -93,12 +96,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Actualiza la imagen de perfil del usuario.
+     *
+     * @param imageString Imagen de perfil en formato String.
+     */
     fun updateProfileImage(imageString: String) {
         val sharedPreferences = getSharedPreferences("user_profile", Context.MODE_PRIVATE)
         sharedPreferences.edit().putString("profile_image", imageString).apply()
         loadProfileImage(userIcon)
     }
 
+    /**
+     * Controla la navegación.
+     */
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp() || super.onSupportNavigateUp()

@@ -20,6 +20,10 @@ import com.avs.supersapiens.utils.ProgressManager
 import com.avs.supersapiens.utils.QuestionGenerator
 import java.util.*
 
+/**
+ * Actividad que muestra las preguntas y respuestas del juego de matemáticas.
+
+ */
 class MathGamePlayActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMathGamePlayBinding
@@ -55,6 +59,9 @@ class MathGamePlayActivity : AppCompatActivity() {
         showQuestion()
     }
 
+    /**
+     * Muestra la pregunta actual en la interfaz de usuario.
+     */
     private fun showQuestion() {
         if (currentQuestionIndex < questions.size) {
             val question = questions[currentQuestionIndex]

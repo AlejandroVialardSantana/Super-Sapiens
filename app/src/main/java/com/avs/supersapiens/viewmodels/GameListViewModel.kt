@@ -43,6 +43,8 @@ class GameListViewModel(application: Application) : AndroidViewModel(application
         _games.value = games
     }
 
+    // Método para comprobar si se ha desbloqueado un nuevo juego en base
+    // a la puntuación obtenida en los juegos anteriores.
     fun checkForUnlocks() {
         val games = _games.value ?: return
         for (i in games.indices) {
